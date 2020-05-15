@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Entites
 {
-    class PNJ
+    public class PNJ
     {
     }
 }

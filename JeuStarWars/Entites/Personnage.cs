@@ -2,7 +2,7 @@
 
 namespace Entites
 {
-    class Personnage
+    public class Personnage
     {
         public Position position;
         public int pv;

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Entites
 {
-    class Position
+    public class Position
     {
         private int x, y;
         public void SetX(int x)
