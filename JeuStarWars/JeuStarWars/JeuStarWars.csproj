@@ -3,6 +3,11 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <StartupObject>JeuStarWars.JeuStarWars</StartupObject>
   </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ApplicationCore.Entities\ApplicationCore.Entities.csproj" />
+  </ItemGroup>
 
 </Project>
