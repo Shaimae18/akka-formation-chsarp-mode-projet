@@ -3,7 +3,7 @@ using Entities;
 using System;
 using System.Collections.Generic;
 using System.Text;
-namespace Services
+namespace ApplicationCore.services
 {
     public class PersonnageService: IPersonnageService
     {
@@ -34,9 +34,6 @@ namespace Services
         {
             throw new NotImplementedException();
         }
-        public override string ToString()
-        {
-            return base.ToString();
-        }
+       
     }
 }
