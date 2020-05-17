@@ -21,45 +21,58 @@ namespace JeuStarWars.Utilities
 
 
 
-        public static void SetFrame(List<string> listContent, int width)
+        public static void SetFrame(List<string> listContent, int width, int threadSleepValue=0)
         {
             string topFrame = string.Empty;
             string bottomFrame = string.Empty;
             StringBuilder frame = new StringBuilder(topLeftBorder);
             Console.ForegroundColor = ConsoleColor.Green;
+            ClearCurrentConsoleLine();
             for (int i = 0; i < width; i++)
                 frame.Append(border);
             frame.Append(topRightBorder);
             topFrame = frame.ToString();
             int windowWidth = topFrame.Length-2;
-            Console.Write(new string(' ', (Console.WindowWidth - topFrame.Length) / 2));
+            Console.Write(new string(' ', ((Console.WindowWidth - topFrame.Length) <0 ? 0 : (Console.WindowWidth - topFrame.Length)) / 2)) ;
             Console.WriteLine(topFrame);
 
             foreach (string content in listContent)
             {
-                Console.Write(new string(' ', (Console.WindowWidth - topFrame.Length) / 2));
+                ClearCurrentConsoleLine();
+                Console.Write(new string(' ', ((Console.WindowWidth - topFrame.Length) < 0 ? 0 : (Console.WindowWidth - topFrame.Length)) / 2));
                 Console.WriteLine(String.Format("║{0," + ((windowWidth / 2) + (content.Length / 2)) + "}{1," + (windowWidth - (windowWidth / 2) - (content.Length / 2) + 1) + "}", content, "║"));
+                Thread.Sleep(threadSleepValue);
             }
+
             frame = new StringBuilder(bottomLeftBorder);
             for (int i = 0; i < width; i++)
                 frame.Append(border);
             frame.Append(bottomRightBorder);
             bottomFrame = frame.ToString();
-            Console.Write(new string(' ', (Console.WindowWidth - bottomFrame.Length) / 2));
+            ClearCurrentConsoleLine();
+            Console.Write(new string(' ', ((Console.WindowWidth - bottomFrame.Length)<0 ? 0 : Console.WindowWidth - bottomFrame.Length) / 2));
             Console.WriteLine(bottomFrame);
             
         }
 
+        internal static void SetConsoleCursorPosition(int posLeft, int posTop)
+        {
+            Console.SetCursorPosition(posLeft, posTop);
+        }
+
         public static void SetGrille(int width, int height, IEnumerable<Position> listInitialPositions)
         {
+
+          
             Console.OutputEncoding = System.Text.Encoding.Unicode;
             Console.ForegroundColor = ConsoleColor.Green;
             string topFrame = string.Empty;
             string bottomFrame = string.Empty;
             StringBuilder frame;
-          
+           
             for (int row = 0; row < height; row++)
-            { 
+            {
+                ClearCurrentConsoleLine();
                 frame = new StringBuilder();
                 for (int i = 0; i < width; i++)
                 {
@@ -73,7 +86,9 @@ namespace JeuStarWars.Utilities
 
                 topFrame = frame.ToString();
                 Console.Write(new string(' ', (Console.WindowWidth - topFrame.Length) / 2));
-                Console.WriteLine(topFrame);
+                Console.Write(topFrame);
+                
+                Console.WriteLine();
                 Console.Write(new string(' ', (Console.WindowWidth - topFrame.Length) / 2));
                 int col = 0;
                 while (col < width)
@@ -127,6 +142,9 @@ namespace JeuStarWars.Utilities
                 Console.WriteLine(bottomFrame);
                 Thread.Sleep(100);
             }
+            
+          
+           
         }
         public static void SetEmptyLine(int nbrEmptyLine)
         {
@@ -145,5 +163,6 @@ namespace JeuStarWars.Utilities
                 Console.Write(" ");
             Console.SetCursorPosition(0, currentLineCursor);
         }
+        
     }
 }
