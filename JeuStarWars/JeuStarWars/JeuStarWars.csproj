@@ -15,7 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ApplicationCore.Entities\ApplicationCore.Entities.csproj" />
-    <ProjectReference Include="..\DomainServices\ApplicationCore.services.csproj" />
+    <ProjectReference Include="..\ApplicationCore.Services\ApplicationCore.services.csproj" />
   </ItemGroup>
 
 </Project>
