@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Data
+namespace ApplicationCore.Repository
 {
     public class Class1
     {

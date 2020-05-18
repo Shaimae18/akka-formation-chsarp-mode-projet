@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Entites
+namespace Entities
 {
     public class Partie
     {

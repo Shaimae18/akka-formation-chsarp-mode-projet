@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Entites
+namespace ApplicationCore.services
 {
-    class Grille
+    public interface IGrilleService
     {
+        
     }
 }

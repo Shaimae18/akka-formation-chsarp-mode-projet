@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Entites
+namespace Entities
 {
-    class Joueur
+    public class PNJ
     {
     }
 }
