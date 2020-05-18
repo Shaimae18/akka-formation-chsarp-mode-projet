@@ -16,7 +16,7 @@ namespace JeuStarWars
         public static ServiceProvider serviceProvider;
         public static int nombreEnnemie = 10;
         public static Personnage currentPersonnage;
-        public static Grille grille; 
+        public static Grille grille;
         private static dynamic headerCursorPosition;
         private static IEnumerable<Position> listPosition;
         private static IDeplacementService deplacementService;
@@ -27,7 +27,7 @@ namespace JeuStarWars
             ConfigureDependencies();
             ConsolePrametrage();
             WelcomeScreen();
-            
+
 
         }
 
@@ -55,11 +55,11 @@ namespace JeuStarWars
 
         private static void NouvellePartie()
         {
-            
-            Console.SetCursorPosition(headerCursorPosition.posLeft,headerCursorPosition.posTop);
+
+            Console.SetCursorPosition(headerCursorPosition.posLeft, headerCursorPosition.posTop);
             ReintialiseCursorPos();
-            ChoisirPersonnage();
             Prologue();
+            ChoisirPersonnage();
             ReintialiseCursorPos();
             SetInstruction();
             SetJoueurInfo();
@@ -67,7 +67,7 @@ namespace JeuStarWars
             isGameOver = false;
             deplacementService = serviceProvider.GetService<IDeplacementService>();
             listPosition = deplacementService.GetInitialPosition(currentPersonnage, nombreEnnemie);
-            grille =ConsoleWriter.SetGrille(18, 10, listPosition);
+            grille = ConsoleWriter.SetGrille(18, 10, listPosition);
             RunTour();
         }
 
@@ -82,7 +82,7 @@ namespace JeuStarWars
                 switch (key.Key)
                 {
                     case ConsoleKey.LeftArrow:
-                       
+
                         if (pos != null && CanMove(TypeDeplacement.Left))
                             ConsoleWriter.Left(pos);
                         break;
@@ -100,18 +100,18 @@ namespace JeuStarWars
                             isMoved = false;
                         break;
                     case ConsoleKey.DownArrow:
-                       
+
                         if (pos != null && CanMove(TypeDeplacement.Down))
                             ConsoleWriter.Down(pos);
                         else
                             isMoved = false;
                         break;
-                  
+
                     default:
                         break;
 
                 }
-                    if(isMoved)
+                if (isMoved)
                 {
                     listPosition.Where(p => p.Personnage.TypePersonnage != TypePersonnage.Ennemie).FirstOrDefault().TopCursorPosition = Console.CursorTop;
                     listPosition.Where(p => p.Personnage.TypePersonnage != TypePersonnage.Ennemie).FirstOrDefault().LeftCursorPosition = Console.CursorLeft - 3;
@@ -119,7 +119,7 @@ namespace JeuStarWars
                     Thread.Sleep(1000);
                     MoveEnnemie();
                 }
-                
+
             }
 
 
@@ -132,12 +132,12 @@ namespace JeuStarWars
         private static void MoveEnnemie()
         {
             var currentPosition = listPosition.Where(p => p.Personnage.TypePersonnage != TypePersonnage.Ennemie).FirstOrDefault();
-            Dictionary<TypeDeplacement, Position> dictPos= deplacementService.DeplacerLePlusProcheEnnemie(currentPosition, listPosition,grille) ;
-            if(dictPos.Any())
-            switch (dictPos.First().Key)
-            {
+            Dictionary<TypeDeplacement, Position> dictPos = deplacementService.DeplacerLePlusProcheEnnemie(currentPosition, listPosition, grille);
+            if (dictPos.Any())
+                switch (dictPos.First().Key)
+                {
                     case TypeDeplacement.Up:
-                        ConsoleWriter.Up(dictPos.First().Value,TypePersonnage.Ennemie) ;
+                        ConsoleWriter.Up(dictPos.First().Value, TypePersonnage.Ennemie);
                         break;
                     case TypeDeplacement.Down:
                         ConsoleWriter.Down(dictPos.First().Value, TypePersonnage.Ennemie);
@@ -148,7 +148,7 @@ namespace JeuStarWars
                     case TypeDeplacement.Right:
                         ConsoleWriter.Right(dictPos.First().Value, TypePersonnage.Ennemie);
                         break;
-            }
+                }
             listPosition.Where(p => p.LeftCursorPosition == dictPos.First().Value.LeftCursorPosition && p.TopCursorPosition == dictPos.First().Value.TopCursorPosition).FirstOrDefault().TopCursorPosition = Console.CursorTop;
             listPosition.Where(p => p.LeftCursorPosition == dictPos.First().Value.LeftCursorPosition && p.TopCursorPosition == dictPos.First().Value.TopCursorPosition).FirstOrDefault().LeftCursorPosition = Console.CursorLeft - 3;
             isMonTour = true;
@@ -170,7 +170,7 @@ namespace JeuStarWars
                  "et à droite en utilisant les touches " ,
                  "directionnelles(← ↓ → ↑).",
                  "Si un joueur n'a plus de points de vie, il perd la partie.",
-                
+
             };
             ConsoleWriter.SetFrame(listContent, 90, 30);
         }
@@ -178,13 +178,13 @@ namespace JeuStarWars
         private static void ReintialiseCursorPos()
         {
             ConsoleWriter.SetConsoleCursorPosition(headerCursorPosition.posLeft, headerCursorPosition.posTop);
-           
+
 
         }
 
         private static void Prologue()
         {
-          
+
             List<string> listContent = new List<string>()
             {
               "L'agitation règne au Sénat",
@@ -209,10 +209,10 @@ namespace JeuStarWars
               "aider les Jedi débordés..."
 
             };
-            ConsoleWriter.SetFrame(listContent, 50,50) ;
+            ConsoleWriter.SetFrame(listContent, 50, 50);
             Console.WriteLine("Cliquer sur entrer pour continuer");
             Console.ReadLine();
-        
+
         }
         private static void SetJoueurInfo()
         {
@@ -220,14 +220,42 @@ namespace JeuStarWars
             {
                currentPersonnage.ToString()
             };
-            ConsoleWriter.SetFrame(listContent, 90,30) ;
+            ConsoleWriter.SetFrame(listContent, 90, 30);
         }
 
         private static void ChoisirPersonnage()
-        
+
         {
+            ConsoleWriter.SetEmptyLine(2);
+            List<string> listContent = new List<string>()
+            {
+                "    Choisissez une option parmi les options suivantes:",
+                "<<<<   L: Pour jouer du côté Lumineux   >>>>" ,
+                "<<<<    O: Pour jouer du côté Obscur    >>>>"
+            };
+            ConsoleWriter.SetFrame(listContent, 70, 50);
+            ConsoleWriter.SetEmptyLine(4);
+            
             var personnageService = serviceProvider.GetService<IPersonnageService>();
-            currentPersonnage = new Personnage("Obiwan", pointsVie: 250, pointsMagie: 150, typePersonnage: TypePersonnage.Hero) ;
+            var listePersonnage = personnageService.GetPersonnagesByCote(GetCote());
+
+            List<string> listCharac = new List<string>()
+            {
+                "    Choisissez un personnage parmi les suivants:"
+            };
+            int i = 0;
+            foreach (Personnage p in listePersonnage)
+            {
+                listCharac.Add("<<<<   "+i+": "+p.ToString()+"  >>>>");
+                i++;
+            }
+            ConsoleWriter.SetFrame(listCharac, 90, 20+i*10);
+            ConsoleWriter.SetEmptyLine(4);
+
+            Console.Write("Tapez votre choix, puis appuyez sur entrée  ");
+            i = int.Parse(Console.ReadLine());
+
+            currentPersonnage = new Personnage(listePersonnage.ElementAt(i));
         }
 
         public static void SetConsoleEntete()
@@ -236,7 +264,7 @@ namespace JeuStarWars
             List<string> listContent = text.Result.ToList();
             text = new WenceyWang.FIGlet.AsciiArt("L'attaque des clones");
             listContent.AddRange(text.Result.ToList());
-            ConsoleWriter.SetFrame(listContent, 150,100);
+            ConsoleWriter.SetFrame(listContent, 150, 100);
             headerCursorPosition = new { posLeft = Console.CursorLeft, posTop = Console.CursorTop };
 
         }
@@ -250,9 +278,25 @@ namespace JeuStarWars
                 "<<<<   C: Pour reperendre une partie sauvgarder  >>>>",
                 "<<<<               Q: Pour quitter               >>>>"
             };
-            ConsoleWriter.SetFrame(listContent, 70,50);
+            ConsoleWriter.SetFrame(listContent, 70, 50);
             ConsoleWriter.SetEmptyLine(4);
             GetMode();
+        }
+
+        private static Cote GetCote()
+        {
+            Console.Write("Tapez votre choix, puis appuyez sur entrée  ");
+            switch (Console.ReadLine())
+            {
+                case "l":
+                case "L":
+                    return Cote.Lumineux;
+                case "o":
+                case "O":
+                    return Cote.Obscur;
+                default:
+                    return GetCote();
+            }
         }
 
         private static void GetMode()
