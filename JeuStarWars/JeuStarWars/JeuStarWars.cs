@@ -76,57 +76,120 @@ namespace JeuStarWars
 
             while (isMonTour && !isGameOver)
             {
-                bool isMoved = true;
-                ConsoleKeyInfo key = Console.ReadKey(true);
+                bool isMoved=true;
+                bool isAttack = false;
                 var pos = listPosition.Where(p => p.Personnage.TypePersonnage != TypePersonnage.Ennemie).FirstOrDefault();
+                ConsoleKeyInfo key = Console.ReadKey(true);
+                if (!key.Modifiers.HasFlag(ConsoleModifiers.Shift))
+                {
+
+                    switch (key.Key)
+                    {
+                        case ConsoleKey.LeftArrow:
+
+                            if (pos != null && CanMove(TypeDeplacement.Left))
+                                ConsoleWriter.Left(pos);
+                            else
+                                isMoved = false;
+                            break;
+                        case ConsoleKey.RightArrow:
+
+                            if (pos != null && CanMove(TypeDeplacement.Right))
+                                ConsoleWriter.Right(pos);
+                            else
+                                isMoved = false;
+                            break;
+                        case ConsoleKey.UpArrow:
+                            if (pos != null && CanMove(TypeDeplacement.Up))
+                                ConsoleWriter.Up(pos);
+                            else
+                                isMoved = false;
+                            break;
+                        case ConsoleKey.DownArrow:
+                            if (pos != null && CanMove(TypeDeplacement.Down))
+
+                                ConsoleWriter.Down(pos);
+                            else
+                                isMoved = false;
+                            break;
+                        
+                        default:
+                            if ((key.Modifiers & ConsoleModifiers.Control) != 0)
+                            {
+                                Console.Write("Ctrl + ");
+                            }
+                            isMoved = false;
+                           
+                            break;
+
+                    }
+                    if (isMoved )
+                    {
+                        listPosition.Where(p => p.Personnage.TypePersonnage != TypePersonnage.Ennemie).FirstOrDefault().TopCursorPosition = Console.CursorTop;
+                        listPosition.Where(p => p.Personnage.TypePersonnage != TypePersonnage.Ennemie).FirstOrDefault().LeftCursorPosition = Console.CursorLeft - 3;
+                        isMonTour = false;
+                        isMoved = false;
+                        Thread.Sleep(1000);
+                        MoveEnnemie();
+                    }
+                }
+                else
+                    isAttack = RunAttack(key,pos);
+
+
+
+            }
+        }
+
+        private static bool RunAttack(ConsoleKeyInfo key, Position pos)
+        {
+            bool isAttack = true;
                 switch (key.Key)
                 {
-                    case ConsoleKey.LeftArrow:
-                       
-                        if (pos != null && CanMove(TypeDeplacement.Left))
-                            ConsoleWriter.Left(pos);
-                        break;
-                    case ConsoleKey.RightArrow:
+                    case ConsoleKey.L:
+                    if (pos != null && CanAttack(TypeDeplacement.Left))
+                        ConsoleWriter.LeftAttack(currentPersonnage,pos,listPosition);
+                    else
+                        isAttack = false;
+                    return isAttack;
+                    break;
+                    case ConsoleKey.P:
+                    if (pos != null && CanAttack(TypeDeplacement.Left))
+                        ConsoleWriter.RigthAttack(currentPersonnage, pos, listPosition);
+                    else
+                        isAttack = false;
+                    return isAttack;
+                    break;
+                    case ConsoleKey.Q:
+                    if (pos != null && CanAttack(TypeDeplacement.Up))
+                       ConsoleWriter.UpAttack(currentPersonnage, pos, listPosition);
+                    else
+                        isAttack = false;
+                    return isAttack;
+                    break;
+                    case ConsoleKey.A:
+                        Console.WriteLine("Attack down");
+                    if (pos != null && CanAttack(TypeDeplacement.Down))
+                        ConsoleWriter.DownAttack(currentPersonnage, pos, listPosition);
+                    else
+                            isAttack = false;
+                        return isAttack;
+                    break;
 
-                        if (pos != null && CanMove(TypeDeplacement.Right))
-                            ConsoleWriter.Right(pos);
-                        else
-                            isMoved = false;
-                        break;
-                    case ConsoleKey.UpArrow:
-                        if (pos != null && CanMove(TypeDeplacement.Up))
-                            ConsoleWriter.Up(pos);
-                        else
-                            isMoved = false;
-                        break;
-                    case ConsoleKey.DownArrow:
-                       
-                        if (pos != null && CanMove(TypeDeplacement.Down))
-                            ConsoleWriter.Down(pos);
-                        else
-                            isMoved = false;
-                        break;
-                  
                     default:
-                        break;
+                    return isAttack;
+                    break;
 
-                }
-                    if(isMoved)
-                {
-                    listPosition.Where(p => p.Personnage.TypePersonnage != TypePersonnage.Ennemie).FirstOrDefault().TopCursorPosition = Console.CursorTop;
-                    listPosition.Where(p => p.Personnage.TypePersonnage != TypePersonnage.Ennemie).FirstOrDefault().LeftCursorPosition = Console.CursorLeft - 3;
-                    isMonTour = false;
-                    Thread.Sleep(1000);
-                    MoveEnnemie();
-                }
-                
+
+                    
+               
             }
+                
+        }
 
-
-
-
-
-
+        private static bool CanAttack(TypeDeplacement right)
+        {
+            return true;
         }
 
         private static void MoveEnnemie()

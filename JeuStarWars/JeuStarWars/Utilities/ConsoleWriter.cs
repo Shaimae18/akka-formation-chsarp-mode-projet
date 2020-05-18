@@ -18,6 +18,8 @@ namespace JeuStarWars.Utilities
         static string heroChar = "☻";
         static string ennemiChar = "☻";
         static string specialHeroChar = "[☺]";
+        static string attaqueChar = "▓";
+
 
 
 
@@ -105,13 +107,13 @@ namespace JeuStarWars.Utilities
                         switch (pos.Personnage.TypePersonnage)
                         {
                             case Entities.TypePersonnage.Hero:
-                                SetPersonnageRepresentation(heroChar, ConsoleColor.Blue);
+                                SetCharInCase(heroChar, ConsoleColor.Blue);
                                 break;
                             case Entities.TypePersonnage.SpecialHero:
-                                SetPersonnageRepresentation(specialHeroChar, ConsoleColor.DarkYellow);
+                                SetCharInCase(specialHeroChar, ConsoleColor.DarkYellow);
                                 break;
                             case Entities.TypePersonnage.Ennemie:
-                                SetPersonnageRepresentation(ennemiChar, ConsoleColor.Red);
+                                SetCharInCase(ennemiChar, ConsoleColor.Red);
                                 break;
                         }
                         Console.ForegroundColor = ConsoleColor.Green;
@@ -151,12 +153,20 @@ namespace JeuStarWars.Utilities
            
         }
 
-        private static void SetPersonnageRepresentation(string personnageChar, ConsoleColor color)
+        
+
+        private static void SetCharInCase(string personnageChar, ConsoleColor color)
         {
             Console.ForegroundColor = color;
             Console.Write($" {personnageChar} ");
         }
-
+        private static void SetCharInCaseByPosition(string chaine, int leftPos,int topPos, ConsoleColor color, int effetRalenti =0)
+        {
+            Console.SetCursorPosition(leftPos, topPos);
+            Console.ForegroundColor = color;
+            Console.Write(chaine);
+            Thread.Sleep(effetRalenti);
+        }
         public static void SetEmptyLine(int nbrEmptyLine)
         {
             int a = 0;
@@ -175,62 +185,63 @@ namespace JeuStarWars.Utilities
             Console.SetCursorPosition(0, currentLineCursor);
         }
 
-        public static void Up(Position position, TypePersonnage typePersonnage = TypePersonnage.Hero) 
+        #region Deplacement
+        public static void Up(Position position, TypePersonnage typePersonnage = TypePersonnage.Hero)
         {
-            Console.SetCursorPosition(position.LeftCursorPosition+1 , position.TopCursorPosition);
+            Console.SetCursorPosition(position.LeftCursorPosition + 1, position.TopCursorPosition);
             Console.Write(" ");
-            Console.SetCursorPosition(Console.CursorLeft -2, Console.CursorTop - 3);
-            switch(typePersonnage)
+            Console.SetCursorPosition(Console.CursorLeft - 2, Console.CursorTop - 3);
+            switch (typePersonnage)
             {
                 case TypePersonnage.Hero:
-                    SetPersonnageRepresentation(heroChar, ConsoleColor.Blue);
+                    SetCharInCase(heroChar, ConsoleColor.Blue);
                     break;
                 case TypePersonnage.SpecialHero:
-                    SetPersonnageRepresentation(specialHeroChar, ConsoleColor.DarkYellow);
+                    SetCharInCase(specialHeroChar, ConsoleColor.DarkYellow);
                     break;
                 case TypePersonnage.Ennemie:
-                    SetPersonnageRepresentation(ennemiChar, ConsoleColor.Red);
+                    SetCharInCase(ennemiChar, ConsoleColor.Red);
                     break;
 
 
             }
 
         }
-        public static void Down(Position position, TypePersonnage typePersonnage = TypePersonnage.Hero) 
+        public static void Down(Position position, TypePersonnage typePersonnage = TypePersonnage.Hero)
         {
-            Console.SetCursorPosition(position.LeftCursorPosition+1 , position.TopCursorPosition);
+            Console.SetCursorPosition(position.LeftCursorPosition + 1, position.TopCursorPosition);
             Console.Write(" ");
-            Console.SetCursorPosition(Console.CursorLeft-2 , Console.CursorTop + 3);
+            Console.SetCursorPosition(Console.CursorLeft - 2, Console.CursorTop + 3);
             switch (typePersonnage)
             {
                 case TypePersonnage.Hero:
-                    SetPersonnageRepresentation(heroChar, ConsoleColor.Blue);
+                    SetCharInCase(heroChar, ConsoleColor.Blue);
                     break;
                 case TypePersonnage.SpecialHero:
-                    SetPersonnageRepresentation(specialHeroChar, ConsoleColor.DarkYellow);
+                    SetCharInCase(specialHeroChar, ConsoleColor.DarkYellow);
                     break;
                 case TypePersonnage.Ennemie:
-                    SetPersonnageRepresentation(ennemiChar, ConsoleColor.Red);
+                    SetCharInCase(ennemiChar, ConsoleColor.Red);
                     break;
 
 
             }
         }
-        public static void Left(Position position, TypePersonnage typePersonnage = TypePersonnage.Hero) 
+        public static void Left(Position position, TypePersonnage typePersonnage = TypePersonnage.Hero)
         {
-            Console.SetCursorPosition(position.LeftCursorPosition+1,position.TopCursorPosition);
+            Console.SetCursorPosition(position.LeftCursorPosition + 1, position.TopCursorPosition);
             Console.Write(" ");
-            Console.SetCursorPosition(Console.CursorLeft-2 - 5, Console.CursorTop);
+            Console.SetCursorPosition(Console.CursorLeft - 2 - 5, Console.CursorTop);
             switch (typePersonnage)
             {
                 case TypePersonnage.Hero:
-                    SetPersonnageRepresentation(heroChar, ConsoleColor.Blue);
+                    SetCharInCase(heroChar, ConsoleColor.Blue);
                     break;
                 case TypePersonnage.SpecialHero:
-                    SetPersonnageRepresentation(specialHeroChar, ConsoleColor.DarkYellow);
+                    SetCharInCase(specialHeroChar, ConsoleColor.DarkYellow);
                     break;
                 case TypePersonnage.Ennemie:
-                    SetPersonnageRepresentation(ennemiChar, ConsoleColor.Red);
+                    SetCharInCase(ennemiChar, ConsoleColor.Red);
                     break;
 
 
@@ -240,22 +251,129 @@ namespace JeuStarWars.Utilities
         {
             Console.SetCursorPosition(position.LeftCursorPosition + 1, position.TopCursorPosition);
             Console.Write(" ");
-            Console.SetCursorPosition(Console.CursorLeft -2+ 5, Console.CursorTop);
+            Console.SetCursorPosition(Console.CursorLeft - 2 + 5, Console.CursorTop);
             switch (typePersonnage)
             {
                 case TypePersonnage.Hero:
-                    SetPersonnageRepresentation(heroChar, ConsoleColor.Blue);
+                    SetCharInCase(heroChar, ConsoleColor.Blue);
                     break;
                 case TypePersonnage.SpecialHero:
-                    SetPersonnageRepresentation(specialHeroChar, ConsoleColor.DarkYellow);
+                    SetCharInCase(specialHeroChar, ConsoleColor.DarkYellow);
                     break;
                 case TypePersonnage.Ennemie:
-                    SetPersonnageRepresentation(ennemiChar, ConsoleColor.Red);
+                    SetCharInCase(ennemiChar, ConsoleColor.Red);
                     break;
 
 
             }
         }
 
+        #endregion
+        #region Attaque
+        public static void LeftAttack(Personnage personnageJoueur,Position position, IEnumerable<Position> listPos)
+        {
+            Console.SetCursorPosition(position.LeftCursorPosition + 1, position.TopCursorPosition);
+            AnimerAttaqueLeft(1);
+            if(listPos.Any(p => p.LeftCursorPosition == position.LeftCursorPosition-5 && p.TopCursorPosition == position.TopCursorPosition ))
+            {
+                AjouterCadavre(1,0) ;
+
+            }
+            SetCharInCaseByPosition(middelBorder, position.LeftCursorPosition - 1, Console.CursorTop, ConsoleColor.Green);
+            
+        }
+        public static void RigthAttack(Personnage personnageJoueur, Position position, IEnumerable<Position> listPos)
+        {
+            Console.SetCursorPosition(position.LeftCursorPosition+2 , position.TopCursorPosition);
+            AnimerAttaqueRight(-1);
+            //listPos.Any(p => p.LeftCursorPosition == position.LeftCursorPosition + 5 && p.TopCursorPosition == position.TopCursorPosition)
+            if (true)
+            {
+                Console.SetCursorPosition(Console.CursorLeft + 1, Console.CursorTop);
+                AjouterCadavre(1, 0);
+
+            }
+            SetCharInCaseByPosition(middelBorder, position.LeftCursorPosition + 3, Console.CursorTop, ConsoleColor.Green);
+            SetCharInCaseByPosition(middelBorder, position.LeftCursorPosition + 4, Console.CursorTop, ConsoleColor.Green);
+
+        }
+        private static void AnimerAttaqueLeft(int j)
+        {
+            for(int i =1;i<4;i++)
+            {
+                SetCharInCaseByPosition(attaqueChar, Console.CursorLeft - (i*j), Console.CursorTop, ConsoleColor.Red, 100);
+                SetCharInCaseByPosition(" ", Console.CursorLeft - 1, Console.CursorTop, ConsoleColor.Red, 100);
+            }
+        }
+        private static void AnimerAttaqueRight(int j)
+        {
+            for (int i = 1; i < 6; i++)
+            {
+                SetCharInCaseByPosition(attaqueChar, Console.CursorLeft , Console.CursorTop, ConsoleColor.Red, 100);
+                SetCharInCaseByPosition(" ", Console.CursorLeft - 1, Console.CursorTop, ConsoleColor.Red, 100);
+            }
+        }
+
+        public static void UpAttack(Personnage personnageJoueur, Position position, IEnumerable<Position> listPos)
+        {
+            Console.SetCursorPosition(position.LeftCursorPosition+2 , position.TopCursorPosition-1);
+            AnimerAttaqueUp();
+            //listPos.Any(p => p.LeftCursorPosition == position.LeftCursorPosition + 5 && p.TopCursorPosition == position.TopCursorPosition)
+            if (true)
+            {
+                Console.SetCursorPosition(Console.CursorLeft+1 , Console.CursorTop-1);
+                AjouterCadavre(1, 0);
+
+            }
+            SetCharInCaseByPosition(border, position.LeftCursorPosition +1, Console.CursorTop+1, ConsoleColor.Green);
+          
+        }
+        public static void DownAttack(Personnage personnageJoueur, Position position, IEnumerable<Position> listPos)
+        {
+            Console.SetCursorPosition(position.LeftCursorPosition + 2, position.TopCursorPosition + 1);
+            AnimerAttaqueDown();
+            //listPos.Any(p => p.LeftCursorPosition == position.LeftCursorPosition + 5 && p.TopCursorPosition == position.TopCursorPosition)
+            if (true)
+            {
+                Console.SetCursorPosition(Console.CursorLeft + 1, Console.CursorTop + 1);
+                AjouterCadavre(1, 0);
+
+            }
+            SetCharInCaseByPosition(border, position.LeftCursorPosition + 1, Console.CursorTop - 1, ConsoleColor.Green);
+
+        }
+
+        private static void AnimerAttaqueUp()
+        {
+            for (int i = 1; i <2; i++)
+            {
+                SetCharInCaseByPosition(attaqueChar, Console.CursorLeft-1, Console.CursorTop-1, ConsoleColor.Red, 100);
+                SetCharInCaseByPosition(" ", Console.CursorLeft -1, Console.CursorTop, ConsoleColor.Red, 100);
+            }
+        }
+        private static void AnimerAttaqueDown()
+        {
+            for (int i = 1; i < 2; i++)
+            {
+                SetCharInCaseByPosition(attaqueChar, Console.CursorLeft - 1, Console.CursorTop + 1, ConsoleColor.Red, 100);
+                SetCharInCaseByPosition(" ", Console.CursorLeft - 1, Console.CursorTop, ConsoleColor.Red, 100);
+            }
+        }
+
+        private static void AjouterCadavre(int x, int y)
+        {
+            Console.SetCursorPosition(Console.CursorLeft -1, Console.CursorTop);
+            for (int i = 0; i < 5; i++)
+            {
+                SetCharInCaseByPosition("X", Console.CursorLeft - x, Console.CursorTop - y, ConsoleColor.Red, 50);
+                SetCharInCaseByPosition(" ", Console.CursorLeft - x, Console.CursorTop - y, ConsoleColor.Red, 50);
+                SetCharInCaseByPosition("X", Console.CursorLeft - x, Console.CursorTop - y, ConsoleColor.Red, 50);
+            }
+
+        }
+
+       
+        
+#endregion
     }
 }
