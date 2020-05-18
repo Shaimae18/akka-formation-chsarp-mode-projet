@@ -16,22 +16,32 @@ namespace JeuStarWars
         public static ServiceProvider serviceProvider;
         public static int nombreEnnemie = 10;
         public static Personnage currentPersonnage;
-        private static dynamic sauvCursorPosition;
+        public static Grille grille; 
         private static dynamic headerCursorPosition;
         private static IEnumerable<Position> listPosition;
-        private static bool gameIsOn;
+        private static IDeplacementService deplacementService;
+        private static bool isMonTour;
+        private static bool isGameOver;
         static void Main(string[] args)
         {
             ConfigureDependencies();
+            ConsolePrametrage();
             WelcomeScreen();
             
 
         }
+
+        private static void ConsolePrametrage()
+        {
+            Console.OutputEncoding = System.Text.Encoding.Unicode;
+            Console.ForegroundColor = ConsoleColor.Green;
+        }
+
         private static void ConfigureDependencies()
         {
             serviceProvider = new ServiceCollection()
            .AddScoped<IPersonnageService, PersonnageService>()
-           .AddScoped<IPositionService, PositionService>()
+           .AddScoped<IDeplacementService, DeplacementService>()
            .BuildServiceProvider();
         }
 
@@ -53,78 +63,63 @@ namespace JeuStarWars
             ReintialiseCursorPos();
             SetInstruction();
             SetJoueurInfo();
-            gameIsOn = true;
-            var positionService = serviceProvider.GetService<IPositionService>();
-             listPosition = positionService.GetInitialPosition(currentPersonnage, nombreEnnemie);
-            ConsoleWriter.SetGrille(18, 10, listPosition);
+            isMonTour = true;
+            isGameOver = false;
+            deplacementService = serviceProvider.GetService<IDeplacementService>();
+            listPosition = deplacementService.GetInitialPosition(currentPersonnage, nombreEnnemie);
+            grille =ConsoleWriter.SetGrille(18, 10, listPosition);
             RunTour();
-
-            sauvCursorPosition = new { left = Console.CursorLeft, top = Console.CursorTop };
-           
-          
         }
 
         private static void RunTour()
         {
-          
-            while (gameIsOn)
+
+            while (isMonTour && !isGameOver)
             {
+                bool isMoved = true;
                 ConsoleKeyInfo key = Console.ReadKey(true);
                 var pos = listPosition.Where(p => p.Personnage.TypePersonnage != TypePersonnage.Ennemie).FirstOrDefault();
                 switch (key.Key)
                 {
                     case ConsoleKey.LeftArrow:
                        
-                        if (pos != null)
-                        {
-                            Console.SetCursorPosition(pos.LeftCursorPosition + 1, pos.TopCursorPosition);
-                            Console.Write(" ");
-                            Console.SetCursorPosition(pos.LeftCursorPosition + 1-5, pos.TopCursorPosition );
-                            Console.Write("☺");
-     
-                        };
+                        if (pos != null && CanMove(TypeDeplacement.Left))
+                            ConsoleWriter.Left(pos);
                         break;
                     case ConsoleKey.RightArrow:
-                       
-                        if (pos != null)
-                        {
-                            Console.SetCursorPosition(pos.LeftCursorPosition + 1, pos.TopCursorPosition);
-                            Console.Write(" ");
-                            Console.SetCursorPosition(pos.LeftCursorPosition + 1 + 5, pos.TopCursorPosition);
-                            Console.Write("☺");
 
-                        };
+                        if (pos != null && CanMove(TypeDeplacement.Right))
+                            ConsoleWriter.Right(pos);
+                        else
+                            isMoved = false;
                         break;
                     case ConsoleKey.UpArrow:
-                        if (pos != null)
-                        {
-                            Console.SetCursorPosition(pos.LeftCursorPosition + 1, pos.TopCursorPosition);
-                            Console.Write(" ");
-                            Console.SetCursorPosition(pos.LeftCursorPosition + 1, pos.TopCursorPosition-3);
-                            Console.Write("☺");
-
-                        };
+                        if (pos != null && CanMove(TypeDeplacement.Up))
+                            ConsoleWriter.Up(pos);
+                        else
+                            isMoved = false;
                         break;
                     case ConsoleKey.DownArrow:
                        
-                        if (pos != null)
-                        {
-                            Console.SetCursorPosition(pos.LeftCursorPosition + 1, pos.TopCursorPosition);
-                            Console.Write(" ");
-                            Console.SetCursorPosition(pos.LeftCursorPosition + 1, pos.TopCursorPosition + 3);
-                            Console.Write("☺");
-
-                        };
+                        if (pos != null && CanMove(TypeDeplacement.Down))
+                            ConsoleWriter.Down(pos);
+                        else
+                            isMoved = false;
                         break;
-                    case ConsoleKey.Escape:
-                        // GameIsOn = false;
-                        break;
+                  
                     default:
                         break;
 
                 }
-                listPosition.Where(p => p.Personnage.TypePersonnage != TypePersonnage.Ennemie).FirstOrDefault().TopCursorPosition = Console.CursorTop;
-                listPosition.Where(p => p.Personnage.TypePersonnage != TypePersonnage.Ennemie).FirstOrDefault().LeftCursorPosition = Console.CursorLeft-2;
+                    if(isMoved)
+                {
+                    listPosition.Where(p => p.Personnage.TypePersonnage != TypePersonnage.Ennemie).FirstOrDefault().TopCursorPosition = Console.CursorTop;
+                    listPosition.Where(p => p.Personnage.TypePersonnage != TypePersonnage.Ennemie).FirstOrDefault().LeftCursorPosition = Console.CursorLeft - 3;
+                    isMonTour = false;
+                    Thread.Sleep(1000);
+                    MoveEnnemie();
+                }
+                
             }
 
 
@@ -132,6 +127,38 @@ namespace JeuStarWars
 
 
 
+        }
+
+        private static void MoveEnnemie()
+        {
+            var currentPosition = listPosition.Where(p => p.Personnage.TypePersonnage != TypePersonnage.Ennemie).FirstOrDefault();
+            Dictionary<TypeDeplacement, Position> dictPos= deplacementService.DeplacerLePlusProcheEnnemie(currentPosition, listPosition,grille) ;
+            if(dictPos.Any())
+            switch (dictPos.First().Key)
+            {
+                    case TypeDeplacement.Up:
+                        ConsoleWriter.Up(dictPos.First().Value,TypePersonnage.Ennemie) ;
+                        break;
+                    case TypeDeplacement.Down:
+                        ConsoleWriter.Down(dictPos.First().Value, TypePersonnage.Ennemie);
+                        break;
+                    case TypeDeplacement.Left:
+                        ConsoleWriter.Left(dictPos.First().Value, TypePersonnage.Ennemie);
+                        break;
+                    case TypeDeplacement.Right:
+                        ConsoleWriter.Right(dictPos.First().Value, TypePersonnage.Ennemie);
+                        break;
+            }
+            listPosition.Where(p => p.LeftCursorPosition == dictPos.First().Value.LeftCursorPosition && p.TopCursorPosition == dictPos.First().Value.TopCursorPosition).FirstOrDefault().TopCursorPosition = Console.CursorTop;
+            listPosition.Where(p => p.LeftCursorPosition == dictPos.First().Value.LeftCursorPosition && p.TopCursorPosition == dictPos.First().Value.TopCursorPosition).FirstOrDefault().LeftCursorPosition = Console.CursorLeft - 3;
+            isMonTour = true;
+        }
+
+        private static bool CanMove(TypeDeplacement typeDeplacement)
+        {
+            var currentPosition = listPosition.Where(p => p.Personnage.TypePersonnage != TypePersonnage.Ennemie).FirstOrDefault();
+            return deplacementService.CheckMoveValidity(typeDeplacement, currentPosition, grille)
+                && deplacementService.CheckIfCaseIsEmpty(typeDeplacement, currentPosition, listPosition);
         }
 
         private static void SetInstruction()
@@ -183,7 +210,7 @@ namespace JeuStarWars
 
             };
             ConsoleWriter.SetFrame(listContent, 50,50) ;
-            Console.WriteLine("Cliquer sur une touche pour continuer");
+            Console.WriteLine("Cliquer sur entrer pour continuer");
             Console.ReadLine();
         
         }
@@ -197,6 +224,7 @@ namespace JeuStarWars
         }
 
         private static void ChoisirPersonnage()
+        
         {
             var personnageService = serviceProvider.GetService<IPersonnageService>();
             currentPersonnage = new Personnage("Obiwan", pointsVie: 250, pointsMagie: 150, typePersonnage: TypePersonnage.Hero) ;

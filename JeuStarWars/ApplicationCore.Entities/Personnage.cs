@@ -12,10 +12,10 @@ namespace Entities
         public int? PointsMagie { get; set; }
         public int? Portee { get; set; }
         public int? Degat { get; set; }
-        public Position Position { get; set; }
+       
 
 
-        public Personnage(string pseudo, Cote cote = Cote.Lumineux,TypePersonnage typePersonnage = TypePersonnage.Ennemie, int? pointsVie=150, int? pointsMagie=0, int? portee=0, int? degat=0, Position Position = null)
+        public Personnage(string pseudo, Cote cote = Cote.Lumineux,TypePersonnage typePersonnage = TypePersonnage.Ennemie, int? pointsVie=150, int? pointsMagie=0, int? portee=0, int? degat=0)
         {
             this.Pseudo = pseudo;
             this.Cote = cote;

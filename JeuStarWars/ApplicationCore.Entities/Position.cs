@@ -22,5 +22,11 @@ namespace Entities
         }
     }
 
- 
+ public enum TypeDeplacement
+    {
+        Up,
+        Down,
+        Left,
+        Right
+    }
 }

@@ -15,7 +15,7 @@ namespace JeuStarWars.Utilities
         static string bottomLeftBorder = "╚";
         static string bottomRightBorder = "╝";
         static string middelBorder = "║";
-        static string heroChar = "☺";
+        static string heroChar = "☻";
         static string ennemiChar = "☻";
         static string specialHeroChar = "[☺]";
 
@@ -60,16 +60,16 @@ namespace JeuStarWars.Utilities
             Console.SetCursorPosition(posLeft, posTop);
         }
 
-        public static void SetGrille(int width, int height, IEnumerable<Position> listInitialPositions)
+        public static Grille SetGrille(int width, int height, IEnumerable<Position> listInitialPositions)
         {
-
-          
-            Console.OutputEncoding = System.Text.Encoding.Unicode;
-            Console.ForegroundColor = ConsoleColor.Green;
+            
+            Grille grille = new Grille();
+            bool isFirstIteration = true;
             string topFrame = string.Empty;
             string bottomFrame = string.Empty;
             StringBuilder frame;
-           
+            grille.TopBorder = Console.CursorTop;
+            grille.LeftBorder = Console.CursorLeft;
             for (int row = 0; row < height; row++)
             {
                 ClearCurrentConsoleLine();
@@ -86,8 +86,11 @@ namespace JeuStarWars.Utilities
 
                 topFrame = frame.ToString();
                 Console.Write(new string(' ', (Console.WindowWidth - topFrame.Length) / 2));
+                if (isFirstIteration)
+                    grille.LeftBorder = Console.CursorLeft;
                 Console.Write(topFrame);
-                
+                if (isFirstIteration)
+                    grille.RightBorder = Console.CursorLeft;
                 Console.WriteLine();
                 Console.Write(new string(' ', (Console.WindowWidth - topFrame.Length) / 2));
                 int col = 0;
@@ -102,18 +105,13 @@ namespace JeuStarWars.Utilities
                         switch (pos.Personnage.TypePersonnage)
                         {
                             case Entities.TypePersonnage.Hero:
-                                Console.ForegroundColor = ConsoleColor.Blue;
-                                Console.Write($" {heroChar} ");
-                              
+                                SetPersonnageRepresentation(heroChar, ConsoleColor.Blue);
                                 break;
                             case Entities.TypePersonnage.SpecialHero:
-                                Console.ForegroundColor = ConsoleColor.DarkYellow;
-                                Console.Write(specialHeroChar);
+                                SetPersonnageRepresentation(specialHeroChar, ConsoleColor.DarkYellow);
                                 break;
                             case Entities.TypePersonnage.Ennemie:
-                                Console.ForegroundColor = ConsoleColor.Red;
-                                Console.Write($" {ennemiChar} ");
-                               
+                                SetPersonnageRepresentation(ennemiChar, ConsoleColor.Red);
                                 break;
                         }
                         Console.ForegroundColor = ConsoleColor.Green;
@@ -127,7 +125,10 @@ namespace JeuStarWars.Utilities
                     col++;
                 }
                 Console.WriteLine();
+                
+                
                 Console.Write(new string(' ', (Console.WindowWidth - topFrame.Length) / 2));
+                grille.BottomBorder = Console.CursorTop;
                 frame = new StringBuilder();
                 for (int j = 0; j < width; j++)
                 {
@@ -139,13 +140,23 @@ namespace JeuStarWars.Utilities
                     frame.Append(bottomRightBorder);
                 }
                 bottomFrame = frame.ToString();
-                Console.WriteLine(bottomFrame);
+                Console.Write(bottomFrame);
+                grille.RightBorder =Console.CursorLeft;
+                Console.WriteLine();
                 Thread.Sleep(100);
+                isFirstIteration = false;
             }
-            
-          
+
+            return grille;
            
         }
+
+        private static void SetPersonnageRepresentation(string personnageChar, ConsoleColor color)
+        {
+            Console.ForegroundColor = color;
+            Console.Write($" {personnageChar} ");
+        }
+
         public static void SetEmptyLine(int nbrEmptyLine)
         {
             int a = 0;
@@ -163,6 +174,88 @@ namespace JeuStarWars.Utilities
                 Console.Write(" ");
             Console.SetCursorPosition(0, currentLineCursor);
         }
-        
+
+        public static void Up(Position position, TypePersonnage typePersonnage = TypePersonnage.Hero) 
+        {
+            Console.SetCursorPosition(position.LeftCursorPosition+1 , position.TopCursorPosition);
+            Console.Write(" ");
+            Console.SetCursorPosition(Console.CursorLeft -2, Console.CursorTop - 3);
+            switch(typePersonnage)
+            {
+                case TypePersonnage.Hero:
+                    SetPersonnageRepresentation(heroChar, ConsoleColor.Blue);
+                    break;
+                case TypePersonnage.SpecialHero:
+                    SetPersonnageRepresentation(specialHeroChar, ConsoleColor.DarkYellow);
+                    break;
+                case TypePersonnage.Ennemie:
+                    SetPersonnageRepresentation(ennemiChar, ConsoleColor.Red);
+                    break;
+
+
+            }
+
+        }
+        public static void Down(Position position, TypePersonnage typePersonnage = TypePersonnage.Hero) 
+        {
+            Console.SetCursorPosition(position.LeftCursorPosition+1 , position.TopCursorPosition);
+            Console.Write(" ");
+            Console.SetCursorPosition(Console.CursorLeft-2 , Console.CursorTop + 3);
+            switch (typePersonnage)
+            {
+                case TypePersonnage.Hero:
+                    SetPersonnageRepresentation(heroChar, ConsoleColor.Blue);
+                    break;
+                case TypePersonnage.SpecialHero:
+                    SetPersonnageRepresentation(specialHeroChar, ConsoleColor.DarkYellow);
+                    break;
+                case TypePersonnage.Ennemie:
+                    SetPersonnageRepresentation(ennemiChar, ConsoleColor.Red);
+                    break;
+
+
+            }
+        }
+        public static void Left(Position position, TypePersonnage typePersonnage = TypePersonnage.Hero) 
+        {
+            Console.SetCursorPosition(position.LeftCursorPosition+1,position.TopCursorPosition);
+            Console.Write(" ");
+            Console.SetCursorPosition(Console.CursorLeft-2 - 5, Console.CursorTop);
+            switch (typePersonnage)
+            {
+                case TypePersonnage.Hero:
+                    SetPersonnageRepresentation(heroChar, ConsoleColor.Blue);
+                    break;
+                case TypePersonnage.SpecialHero:
+                    SetPersonnageRepresentation(specialHeroChar, ConsoleColor.DarkYellow);
+                    break;
+                case TypePersonnage.Ennemie:
+                    SetPersonnageRepresentation(ennemiChar, ConsoleColor.Red);
+                    break;
+
+
+            }
+        }
+        public static void Right(Position position, TypePersonnage typePersonnage = TypePersonnage.Hero)
+        {
+            Console.SetCursorPosition(position.LeftCursorPosition + 1, position.TopCursorPosition);
+            Console.Write(" ");
+            Console.SetCursorPosition(Console.CursorLeft -2+ 5, Console.CursorTop);
+            switch (typePersonnage)
+            {
+                case TypePersonnage.Hero:
+                    SetPersonnageRepresentation(heroChar, ConsoleColor.Blue);
+                    break;
+                case TypePersonnage.SpecialHero:
+                    SetPersonnageRepresentation(specialHeroChar, ConsoleColor.DarkYellow);
+                    break;
+                case TypePersonnage.Ennemie:
+                    SetPersonnageRepresentation(ennemiChar, ConsoleColor.Red);
+                    break;
+
+
+            }
+        }
+
     }
 }
