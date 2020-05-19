@@ -20,6 +20,8 @@ namespace JeuStarWars
         private static dynamic headerCursorPosition;
         private static IEnumerable<Position> listPosition;
         private static IDeplacementService deplacementService;
+        private static IPersonnageService personnageService;
+        private static IAttaqueService attaqueService;
         private static bool isMonTour;
         private static bool isGameOver;
         static void Main(string[] args)
@@ -42,6 +44,7 @@ namespace JeuStarWars
             serviceProvider = new ServiceCollection()
            .AddScoped<IPersonnageService, PersonnageService>()
            .AddScoped<IDeplacementService, DeplacementService>()
+           .AddScoped<IAttaqueService, AttaqueService>()
            .BuildServiceProvider();
         }
 
@@ -143,12 +146,13 @@ namespace JeuStarWars
 
         private static bool RunAttack(ConsoleKeyInfo key, Position pos)
         {
+            attaqueService = serviceProvider.GetService<IAttaqueService>();
             bool isAttack = true;
                 switch (key.Key)
                 {
                     case ConsoleKey.L:
                     if (pos != null && CanAttack(TypeDeplacement.Left))
-                        ConsoleWriter.LeftAttack(currentPersonnage,pos,listPosition);
+                        ConsoleWriter.LeftAttack(currentPersonnage, pos, listPosition) ;
                     else
                         isAttack = false;
                     return isAttack;
@@ -168,7 +172,6 @@ namespace JeuStarWars
                     return isAttack;
                     break;
                     case ConsoleKey.A:
-                        Console.WriteLine("Attack down");
                     if (pos != null && CanAttack(TypeDeplacement.Down))
                         ConsoleWriter.DownAttack(currentPersonnage, pos, listPosition);
                     else
@@ -289,7 +292,7 @@ namespace JeuStarWars
         private static void ChoisirPersonnage()
         
         {
-            var personnageService = serviceProvider.GetService<IPersonnageService>();
+            personnageService = serviceProvider.GetService<IPersonnageService>();
             currentPersonnage = new Personnage("Obiwan", pointsVie: 250, pointsMagie: 150, typePersonnage: TypePersonnage.Hero) ;
         }
 

@@ -135,7 +135,6 @@ namespace JeuStarWars.Utilities
                 for (int j = 0; j < width; j++)
                 {
                     frame.Append(bottomLeftBorder);
-                   
                     frame.Append(border);
                     frame.Append(border);
                     frame.Append(border);
@@ -286,8 +285,8 @@ namespace JeuStarWars.Utilities
         {
             Console.SetCursorPosition(position.LeftCursorPosition+2 , position.TopCursorPosition);
             AnimerAttaqueRight(-1);
-            //listPos.Any(p => p.LeftCursorPosition == position.LeftCursorPosition + 5 && p.TopCursorPosition == position.TopCursorPosition)
-            if (true)
+            
+            if (listPos.Any(p => p.LeftCursorPosition == position.LeftCursorPosition + 5 && p.TopCursorPosition == position.TopCursorPosition))
             {
                 Console.SetCursorPosition(Console.CursorLeft + 1, Console.CursorTop);
                 AjouterCadavre(1, 0);
@@ -295,6 +294,34 @@ namespace JeuStarWars.Utilities
             }
             SetCharInCaseByPosition(middelBorder, position.LeftCursorPosition + 3, Console.CursorTop, ConsoleColor.Green);
             SetCharInCaseByPosition(middelBorder, position.LeftCursorPosition + 4, Console.CursorTop, ConsoleColor.Green);
+
+        }
+        public static void UpAttack(Personnage personnageJoueur, Position position, IEnumerable<Position> listPos)
+        {
+            Console.SetCursorPosition(position.LeftCursorPosition + 2, position.TopCursorPosition - 1);
+            AnimerAttaqueUp();
+
+            if (listPos.Any(p => p.LeftCursorPosition == position.LeftCursorPosition + 5 && p.TopCursorPosition == position.TopCursorPosition))
+            {
+                Console.SetCursorPosition(Console.CursorLeft + 1, Console.CursorTop - 1);
+                AjouterCadavre(1, 0);
+
+            }
+            SetCharInCaseByPosition(border, position.LeftCursorPosition + 1, Console.CursorTop + 1, ConsoleColor.Green);
+
+        }
+        public static void DownAttack(Personnage personnageJoueur, Position position, IEnumerable<Position> listPos)
+        {
+            Console.SetCursorPosition(position.LeftCursorPosition + 2, position.TopCursorPosition + 1);
+            AnimerAttaqueDown();
+            //
+            if (listPos.Any(p => p.LeftCursorPosition == position.LeftCursorPosition + 5 && p.TopCursorPosition == position.TopCursorPosition))
+            {
+                Console.SetCursorPosition(Console.CursorLeft + 1, Console.CursorTop + 1);
+                AjouterCadavre(1, 0);
+
+            }
+            SetCharInCaseByPosition(border, position.LeftCursorPosition + 1, Console.CursorTop - 1, ConsoleColor.Green);
 
         }
         private static void AnimerAttaqueLeft(int j)
@@ -313,36 +340,6 @@ namespace JeuStarWars.Utilities
                 SetCharInCaseByPosition(" ", Console.CursorLeft - 1, Console.CursorTop, ConsoleColor.Red, 100);
             }
         }
-
-        public static void UpAttack(Personnage personnageJoueur, Position position, IEnumerable<Position> listPos)
-        {
-            Console.SetCursorPosition(position.LeftCursorPosition+2 , position.TopCursorPosition-1);
-            AnimerAttaqueUp();
-            //listPos.Any(p => p.LeftCursorPosition == position.LeftCursorPosition + 5 && p.TopCursorPosition == position.TopCursorPosition)
-            if (true)
-            {
-                Console.SetCursorPosition(Console.CursorLeft+1 , Console.CursorTop-1);
-                AjouterCadavre(1, 0);
-
-            }
-            SetCharInCaseByPosition(border, position.LeftCursorPosition +1, Console.CursorTop+1, ConsoleColor.Green);
-          
-        }
-        public static void DownAttack(Personnage personnageJoueur, Position position, IEnumerable<Position> listPos)
-        {
-            Console.SetCursorPosition(position.LeftCursorPosition + 2, position.TopCursorPosition + 1);
-            AnimerAttaqueDown();
-            //listPos.Any(p => p.LeftCursorPosition == position.LeftCursorPosition + 5 && p.TopCursorPosition == position.TopCursorPosition)
-            if (true)
-            {
-                Console.SetCursorPosition(Console.CursorLeft + 1, Console.CursorTop + 1);
-                AjouterCadavre(1, 0);
-
-            }
-            SetCharInCaseByPosition(border, position.LeftCursorPosition + 1, Console.CursorTop - 1, ConsoleColor.Green);
-
-        }
-
         private static void AnimerAttaqueUp()
         {
             for (int i = 1; i <2; i++)
