@@ -9,6 +9,7 @@ namespace ApplicationCore.services
     {
         List<Position> GetChampsDattaques(Position currentJoueurPosition, int? portee, Grille borders);
         Position GetAdversaireAattaquer(IEnumerable<Position> listPosition, List<Position> listPosAuChampsDatt);
+        bool JoueurIsInChampsAttaque(Position PositionJoueur, List<Position> listPosAuChampsDatt);
         bool Attaquer(Joueur JoueurAttaquant, Joueur JoueurAttaque);
     }
 }

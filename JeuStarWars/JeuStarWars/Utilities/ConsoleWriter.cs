@@ -9,26 +9,27 @@ namespace JeuStarWars.Utilities
 {
     public static class ConsoleWriter
     {
-        static string border = "═";
-        static string topLeftBorder = "╔";
-        static string topRightBorder = "╗";
-        static string bottomLeftBorder = "╚";
-        static string bottomRightBorder = "╝";
-        static string middelBorder = "║";
-        static string heroChar = "☻";
-        static string ennemiChar = "☻";
-        static string specialHeroChar = "☺";
-        static string attaqueChar = "▓";
+        public static string border = "═";
+        public static string topLeftBorder = "╔";
+        public static string topRightBorder = "╗";
+        public static string bottomLeftBorder = "╚";
+        public static string bottomRightBorder = "╝";
+        public static string middelBorder = "║";
+        public static string heroChar = "☻";
+        public static string ennemiChar = "☻";
+        public static string specialHeroChar = "☺";
+        public static string attaqueChar = "▓";
+        public static string adversaireMort = "Ǿ";
+        public static string lanceAttaqueChar = "▒";
 
 
 
-
-        public static void SetFrame(List<string> listContent, int width, int threadSleepValue = 0)
+        public static void SetFrame(List<string> listContent, int width, int threadSleepValue = 0, ConsoleColor color= ConsoleColor.Green)
         {
             string topFrame = string.Empty;
             string bottomFrame = string.Empty;
             StringBuilder frame = new StringBuilder(topLeftBorder);
-            Console.ForegroundColor = ConsoleColor.Green;
+            Console.ForegroundColor = color;
             ClearCurrentConsoleLine();
             for (int i = 0; i < width; i++)
                 frame.Append(border);
@@ -56,12 +57,10 @@ namespace JeuStarWars.Utilities
             Console.WriteLine(bottomFrame);
 
         }
-
-        internal static void SetConsoleCursorPosition(int posLeft, int posTop)
+        public static void SetConsoleCursorPosition(int posLeft, int posTop)
         {
             Console.SetCursorPosition(posLeft, posTop);
         }
-
         public static Grille SetGrille(int width, int height, IEnumerable<Position> listInitialPositions)
         {
 
@@ -181,6 +180,7 @@ namespace JeuStarWars.Utilities
             int a = 0;
             while (a < nbrEmptyLine + 1)
             {
+                ClearCurrentConsoleLine();
                 Console.WriteLine(" ");
                 a++;
             }
@@ -193,10 +193,6 @@ namespace JeuStarWars.Utilities
                 Console.Write(" ");
             Console.SetCursorPosition(0, currentLineCursor);
         }
-
-
-
-
 
 
         #region Deplacement
@@ -249,18 +245,104 @@ namespace JeuStarWars.Utilities
         #region Attaque
 
 
-        internal static void Attaquer(Position currentJourPosition, Position adversairAattaquerPos)
+        public static void Attaquer(Position currentJourPosition, Position adversairAattaquerPos, bool isDead = true)
         {
-            for (int i = 0; i < 6; i++)
+            for (int i = 0; i < 5; i++)
             {
-                Console.SetCursorPosition(adversairAattaquerPos.LeftCursorPosition + 1, adversairAattaquerPos.TopCursorPosition);
-                SetJoueurInCaseByPosition(" ", adversairAattaquerPos.LeftCursorPosition + 1, adversairAattaquerPos.TopCursorPosition, ConsoleColor.Red, 100);
-                Console.SetCursorPosition(adversairAattaquerPos.LeftCursorPosition + 1, adversairAattaquerPos.TopCursorPosition);
-                SetJoueurInCaseByPosition(attaqueChar, adversairAattaquerPos.LeftCursorPosition + 1, adversairAattaquerPos.TopCursorPosition, ConsoleColor.Red, 100);
+                Console.SetCursorPosition(currentJourPosition.LeftCursorPosition, currentJourPosition.TopCursorPosition);
+                SetJoueurInCaseByPosition(lanceAttaqueChar, currentJourPosition.LeftCursorPosition, currentJourPosition.TopCursorPosition, ConsoleColor.Magenta, 0);
+                Console.SetCursorPosition(currentJourPosition.LeftCursorPosition + 2, currentJourPosition.TopCursorPosition);
+                SetJoueurInCaseByPosition(lanceAttaqueChar, currentJourPosition.LeftCursorPosition + 2, currentJourPosition.TopCursorPosition, ConsoleColor.Magenta, 200);
+                Console.SetCursorPosition(currentJourPosition.LeftCursorPosition + 2, currentJourPosition.TopCursorPosition);
+
+                Console.SetCursorPosition(currentJourPosition.LeftCursorPosition, currentJourPosition.TopCursorPosition);
+                SetJoueurInCaseByPosition(" ", currentJourPosition.LeftCursorPosition, currentJourPosition.TopCursorPosition, ConsoleColor.Magenta, 0);
+                Console.SetCursorPosition(currentJourPosition.LeftCursorPosition + 2, currentJourPosition.TopCursorPosition);
+                SetJoueurInCaseByPosition(" ", currentJourPosition.LeftCursorPosition + 2, currentJourPosition.TopCursorPosition, ConsoleColor.Magenta, 200);
 
             }
-            Console.SetCursorPosition(adversairAattaquerPos.LeftCursorPosition + 1, adversairAattaquerPos.TopCursorPosition);
-            SetJoueurInCaseByPosition("Ǿ", adversairAattaquerPos.LeftCursorPosition + 1, adversairAattaquerPos.TopCursorPosition, ConsoleColor.Red, 0);
+            Console.SetCursorPosition(currentJourPosition.LeftCursorPosition + 1, currentJourPosition.TopCursorPosition);
+            if (currentJourPosition.Joueur.PersonnageJoueur.TypePersonnage == TypePersonnage.LanceurDeSort)
+                SetJoueurInCaseByPosition(specialHeroChar, currentJourPosition.LeftCursorPosition + 1, currentJourPosition.TopCursorPosition, ConsoleColor.DarkYellow, 100);
+            else
+                SetJoueurInCaseByPosition(specialHeroChar, currentJourPosition.LeftCursorPosition + 1, currentJourPosition.TopCursorPosition, ConsoleColor.Blue, 100);
+
+
+            if (isDead)
+            {
+                for (int i = 0; i < 6; i++)
+                {
+                    Console.SetCursorPosition(adversairAattaquerPos.LeftCursorPosition + 1, adversairAattaquerPos.TopCursorPosition);
+                    SetJoueurInCaseByPosition(" ", adversairAattaquerPos.LeftCursorPosition + 1, adversairAattaquerPos.TopCursorPosition, ConsoleColor.Red, 100);
+                    Console.SetCursorPosition(adversairAattaquerPos.LeftCursorPosition + 1, adversairAattaquerPos.TopCursorPosition);
+                    SetJoueurInCaseByPosition(attaqueChar, adversairAattaquerPos.LeftCursorPosition + 1, adversairAattaquerPos.TopCursorPosition, ConsoleColor.Red, 100);
+
+                }
+                Console.SetCursorPosition(adversairAattaquerPos.LeftCursorPosition + 1, adversairAattaquerPos.TopCursorPosition);
+                SetJoueurInCaseByPosition(adversaireMort, adversairAattaquerPos.LeftCursorPosition + 1, adversairAattaquerPos.TopCursorPosition, ConsoleColor.Red, 0);
+            }
+            else
+            {
+                for (int i = 0; i < 8; i++)
+                {
+                    Console.SetCursorPosition(adversairAattaquerPos.LeftCursorPosition + 1, adversairAattaquerPos.TopCursorPosition);
+                    SetJoueurInCaseByPosition(" ", adversairAattaquerPos.LeftCursorPosition + 1, adversairAattaquerPos.TopCursorPosition, ConsoleColor.Red, 100);
+                    Console.SetCursorPosition(adversairAattaquerPos.LeftCursorPosition + 1, adversairAattaquerPos.TopCursorPosition);
+                    SetJoueurInCaseByPosition(ennemiChar, adversairAattaquerPos.LeftCursorPosition + 1, adversairAattaquerPos.TopCursorPosition, ConsoleColor.Red, 100);
+
+                }
+               
+            }
+           
+        }
+
+        public static void AttaquerJoueur(Position pos, Position adversairAattaquerPos, bool isDead = false)
+        {
+            for (int i = 0; i <5; i++)
+            {
+                Console.SetCursorPosition(pos.LeftCursorPosition , pos.TopCursorPosition);
+                SetJoueurInCaseByPosition(lanceAttaqueChar, pos.LeftCursorPosition , pos.TopCursorPosition, ConsoleColor.Red, 0);
+                Console.SetCursorPosition(pos.LeftCursorPosition + 2, pos.TopCursorPosition);
+                SetJoueurInCaseByPosition(lanceAttaqueChar, pos.LeftCursorPosition + 2, pos.TopCursorPosition, ConsoleColor.Red, 200);
+                Console.SetCursorPosition(pos.LeftCursorPosition + 2, pos.TopCursorPosition);
+
+                Console.SetCursorPosition(pos.LeftCursorPosition, pos.TopCursorPosition);
+                SetJoueurInCaseByPosition(" ", pos.LeftCursorPosition , pos.TopCursorPosition, ConsoleColor.Red, 0);
+                Console.SetCursorPosition(pos.LeftCursorPosition + 2, pos.TopCursorPosition);
+                SetJoueurInCaseByPosition(" ", pos.LeftCursorPosition + 2, pos.TopCursorPosition, ConsoleColor.Red, 200);
+
+            }
+            Console.SetCursorPosition(pos.LeftCursorPosition + 1, pos.TopCursorPosition);
+            SetJoueurInCaseByPosition(ennemiChar, pos.LeftCursorPosition + 1, pos.TopCursorPosition, ConsoleColor.Red, 100);
+            if (isDead)
+            {
+                for (int i = 0; i < 6; i++)
+                {
+                    Console.SetCursorPosition(adversairAattaquerPos.LeftCursorPosition + 1, adversairAattaquerPos.TopCursorPosition);
+                    SetJoueurInCaseByPosition(" ", adversairAattaquerPos.LeftCursorPosition + 1, adversairAattaquerPos.TopCursorPosition, ConsoleColor.Red, 100);
+                    Console.SetCursorPosition(adversairAattaquerPos.LeftCursorPosition + 1, adversairAattaquerPos.TopCursorPosition);
+                    SetJoueurInCaseByPosition(attaqueChar, adversairAattaquerPos.LeftCursorPosition + 1, adversairAattaquerPos.TopCursorPosition, ConsoleColor.Red, 100);
+
+                }
+                Console.SetCursorPosition(adversairAattaquerPos.LeftCursorPosition + 1, adversairAattaquerPos.TopCursorPosition);
+                SetJoueurInCaseByPosition(adversaireMort, adversairAattaquerPos.LeftCursorPosition + 1, adversairAattaquerPos.TopCursorPosition, ConsoleColor.Red, 0);
+            }
+            else
+            {
+                for (int i = 0; i < 8; i++)
+                {
+                    Console.SetCursorPosition(adversairAattaquerPos.LeftCursorPosition + 1, adversairAattaquerPos.TopCursorPosition);
+                    SetJoueurInCaseByPosition(" ", adversairAattaquerPos.LeftCursorPosition + 1, adversairAattaquerPos.TopCursorPosition, ConsoleColor.Red, 100);
+                    Console.SetCursorPosition(adversairAattaquerPos.LeftCursorPosition + 1, adversairAattaquerPos.TopCursorPosition);
+                    SetJoueurInCaseByPosition(specialHeroChar, adversairAattaquerPos.LeftCursorPosition + 1, adversairAattaquerPos.TopCursorPosition, ConsoleColor.Red, 100);
+
+                }
+                if (adversairAattaquerPos.Joueur.PersonnageJoueur.TypePersonnage == TypePersonnage.LanceurDeSort)
+                    SetJoueurInCaseByPosition(specialHeroChar, adversairAattaquerPos.LeftCursorPosition + 1, adversairAattaquerPos.TopCursorPosition, ConsoleColor.DarkYellow, 100);
+                else
+                    SetJoueurInCaseByPosition(specialHeroChar, adversairAattaquerPos.LeftCursorPosition + 1, adversairAattaquerPos.TopCursorPosition, ConsoleColor.Blue, 100);
+
+            }
         }
 
 

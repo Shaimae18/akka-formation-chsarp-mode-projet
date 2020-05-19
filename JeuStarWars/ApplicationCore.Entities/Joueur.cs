@@ -8,6 +8,7 @@ namespace Entities
     {
         public PersonnageJoueur PersonnageJoueur { get; set; }
         public TypeJoueur TypeJoueur { get; set; }
+        public int? PointsExperiences { get; set; }
         public int? PointsVie { get; set; }
         public int? PointsMagie { get; set; }
         public int? Portee { get; set; }
@@ -16,10 +17,7 @@ namespace Entities
         public override string ToString()
         {
             StringBuilder stringBuilder = new StringBuilder();
-            //stringBuilder.Append("╔═══════════════════╗╔═══════════════════╗╔═══════════════════╗╔═══════════════════╗╔═══════════════════╗╔═══════════════════╗");
-            //stringBuilder.Append("║      Pseudo       ║║        Côté       ║║    Points de vie  ║║   Points de Magie ║║       Portée      ║║        Degat      ║");
-            //stringBuilder.Append("╚═══════════════════╝╚═══════════════════╝╚═══════════════════╝╚═══════════════════╝╚═══════════════════╝╚═══════════════════╝");
-            stringBuilder.Append($" Joueur: {PersonnageJoueur.Pseudo}  PV: {PointsVie}  PM: {PointsMagie}   Portée: {Portee}   Dégats: {Degat} ");
+            stringBuilder.Append($" Joueur: {PersonnageJoueur.Pseudo} PX: {PointsExperiences} PV: {PointsVie}  PM: {PointsMagie}   Portée: {Portee}   Dégats: {Degat} ");
             return stringBuilder.ToString();
         }
     }
