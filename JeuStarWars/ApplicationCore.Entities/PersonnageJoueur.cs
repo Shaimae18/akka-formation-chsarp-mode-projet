@@ -44,6 +44,7 @@ namespace Entities
             this.PointsMagie = pointsMagie;
             this.Portee = portee;
             this.Degat = degat;
+            this.TypePersonnage = typePersonnage;
 
         }
 
@@ -55,6 +56,7 @@ namespace Entities
             this.PointsMagie = personnage.PointsMagie;
             this.Portee = personnage.Portee;
             this.Degat = personnage.Degat;
+            this.TypePersonnage = personnage.TypePersonnage;
         }
 
         public PersonnageJoueur()

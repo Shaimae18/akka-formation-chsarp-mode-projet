@@ -33,7 +33,7 @@ namespace JeuStarWars
             ConfigureDependencies();
             ConsolePrametrage();
             WelcomeScreen();
-
+            Console.WriteLine();
 
         }
 
@@ -41,6 +41,7 @@ namespace JeuStarWars
         {
             Console.OutputEncoding = System.Text.Encoding.Unicode;
             Console.ForegroundColor = ConsoleColor.Green;
+          
         }
 
         private static void ConfigureDependencies()
@@ -67,7 +68,7 @@ namespace JeuStarWars
             List<string> listContent = text.Result.ToList();
             text = new WenceyWang.FIGlet.AsciiArt("L'attaque des clones");
             listContent.AddRange(text.Result.ToList());
-            ConsoleWriter.SetFrame(listContent, 150, 100);
+            ConsoleWriter.SetFrame(listContent, 120, 100);
             _headerCursorPosition = new { posLeft = Console.CursorLeft, posTop = Console.CursorTop };
 
         }
@@ -86,6 +87,7 @@ namespace JeuStarWars
                 "    Choisissez une option parmi les options suivantes:",
                 "<<<<    N: Pour commencer une nouvelle partie    >>>>" ,
                 "<<<<   C: Pour reperendre une partie sauvgarder  >>>>",
+                "                      Prochainement                  ",
                 "<<<<               Q: Pour quitter               >>>>"
             };
             ConsoleWriter.SetFrame(listContent, 70, 50);
@@ -107,6 +109,7 @@ namespace JeuStarWars
                     break;
                 case "q":
                 case "Q":
+                    Environment.Exit(0);
                     break;
                 default:
                     GetMode();
@@ -353,8 +356,12 @@ namespace JeuStarWars
                 {
                     Console.Write(new string(' ', ((Console.WindowWidth - lenght) < 0 ? 0 : (Console.WindowWidth - lenght)) / 2));
                     Console.WriteLine(row);
+                    
+                    
+
                 }
-               
+                Console.ReadLine();
+
             }
             else if(_isPartieGagner)
             {
@@ -369,6 +376,7 @@ namespace JeuStarWars
                     Console.Write(new string(' ', ((Console.WindowWidth - lenght) < 0 ? 0 : (Console.WindowWidth - lenght)) / 2));
                     Console.WriteLine(row);
                 }
+                Console.ReadLine();
             }
             
 
