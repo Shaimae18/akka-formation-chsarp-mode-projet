@@ -56,7 +56,10 @@ namespace ApplicationCore.services
         {
             return listPosition.Where(p => listPosAuChampsDatt.FirstOrDefault(pos => pos.LeftCursorPosition == p.LeftCursorPosition && pos.TopCursorPosition == p.TopCursorPosition && p.Joueur.Etat!= Etat.Mort)!=null).FirstOrDefault();
         }
-
+        public bool JoueurIsInChampsAttaque(Position positionJoueur, List<Position> listPosAuChampsDatt)
+        {
+            return listPosAuChampsDatt.Where(p => p.LeftCursorPosition == positionJoueur.LeftCursorPosition && p.TopCursorPosition == positionJoueur.TopCursorPosition ).Any();
+        }
         private bool CheckValidity(Position pos, Grille borders)
         {
             return pos.LeftCursorPosition.Between((int)borders.LeftBorder, (int)borders.RightBorder)
@@ -66,12 +69,15 @@ namespace ApplicationCore.services
         public bool Attaquer(Joueur joueurAttaquant, Joueur joueurAttaque)
         {
             bool isDead = true;
-            if (joueurAttaque.PersonnageJoueur.TypePersonnage == TypePersonnage.NonLanceurDeSort)
-                joueurAttaquant.PointsVie+= 1;
-            else
-                joueurAttaquant.PointsVie =joueurAttaquant.PointsVie + 10;
 
-            joueurAttaque.PointsVie -= 1;
+            if (joueurAttaquant.TypeJoueur == TypeJoueur.Joueur)
+            {
+                if (joueurAttaque.PersonnageJoueur.TypePersonnage == TypePersonnage.NonLanceurDeSort)
+                    joueurAttaquant.PointsExperiences += 1;
+                else
+                    joueurAttaquant.PointsExperiences = joueurAttaquant.PointsExperiences + 10;
+            }
+            joueurAttaque.PointsVie -= 10;
             if (joueurAttaque.PointsVie <= 0)
                 joueurAttaque.Etat = Etat.Mort;
             else

@@ -50,11 +50,11 @@ namespace ApplicationCore.services
             }
         }
 
-        public Dictionary<TypeDeplacement, Position> DeplacerLePlusProcheEnnemie(Position currentPosition, IEnumerable<Position> listPosition, Grille grille)
+        public Dictionary<TypeDeplacement, Position> DeplacerLePlusProcheEnnemie(Position currentPosition,Position posPlusProcheEnnemie, IEnumerable<Position> listPosition, Grille grille)
         {
             Dictionary<TypeDeplacement, Position> dictDeplacement = new Dictionary<TypeDeplacement, Position>();
             Dictionary<TypeDeplacement, double> dictDist = new Dictionary<TypeDeplacement, double>();
-            Position pos = GetLePlusProcheEnnemie(currentPosition, listPosition.Where(p => p.Joueur.TypeJoueur == TypeJoueur.Adversaire && p.Joueur.Etat != Etat.Mort));
+            Position pos = posPlusProcheEnnemie;
             Position positionAfterDep = new Position(null, null);
 
             #region Up
@@ -99,7 +99,7 @@ namespace ApplicationCore.services
             return dictDeplacement;
         }
 
-        private Position GetLePlusProcheEnnemie(Position currentPosition, IEnumerable<Position> listPositionEnnemie)
+        public Position GetLePlusProcheEnnemie(Position currentPosition, IEnumerable<Position> listPositionEnnemie)
         {
             Position posPlusProche = null;
             double minDistance = Int32.MaxValue;

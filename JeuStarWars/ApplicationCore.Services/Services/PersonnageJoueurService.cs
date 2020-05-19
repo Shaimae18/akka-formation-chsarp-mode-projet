@@ -27,7 +27,7 @@ namespace ApplicationCore.services
                     new PersonnageJoueur("Yoda",cote:Cote.Lumineux, pointsVie: 150, pointsMagie: 300, typePersonnage: TypePersonnage.LanceurDeSort),
                     new PersonnageJoueur("Mace",cote:Cote.Lumineux, pointsVie: 250, pointsMagie: 250, typePersonnage: TypePersonnage.LanceurDeSort),
                     new PersonnageJoueur("Anakin",cote:Cote.Lumineux, pointsVie: 200, pointsMagie: 200, typePersonnage: TypePersonnage.LanceurDeSort),
-                    new PersonnageJoueur("Vala", cote:Cote.Lumineux,pointsVie: 200, pointsMagie: 0, typePersonnage: TypePersonnage.NonLanceurDeSort)
+                    new PersonnageJoueur("Vala", cote:Cote.Lumineux,pointsVie: 10, pointsMagie: 0, typePersonnage: TypePersonnage.NonLanceurDeSort)
                 };
             }
             else
