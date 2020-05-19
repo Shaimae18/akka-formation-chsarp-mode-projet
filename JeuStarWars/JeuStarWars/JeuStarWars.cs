@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using System.Threading;
 using System.Collections.Generic;
@@ -20,6 +20,8 @@ namespace JeuStarWars
         private static dynamic headerCursorPosition;
         private static IEnumerable<Position> listPosition;
         private static IDeplacementService deplacementService;
+        private static IPersonnageService personnageService;
+        private static IAttaqueService attaqueService;
         private static bool isMonTour;
         private static bool isGameOver;
         static void Main(string[] args)
@@ -42,6 +44,7 @@ namespace JeuStarWars
             serviceProvider = new ServiceCollection()
            .AddScoped<IPersonnageService, PersonnageService>()
            .AddScoped<IDeplacementService, DeplacementService>()
+           .AddScoped<IAttaqueService, AttaqueService>()
            .BuildServiceProvider();
         }
 
@@ -71,62 +74,125 @@ namespace JeuStarWars
             RunTour();
         }
 
-        private static void RunTour()
+         private static void RunTour()
         {
 
             while (isMonTour && !isGameOver)
             {
-                bool isMoved = true;
-                ConsoleKeyInfo key = Console.ReadKey(true);
+                bool isMoved=true;
+                bool isAttack = false;
                 var pos = listPosition.Where(p => p.Personnage.TypePersonnage != TypePersonnage.Ennemie).FirstOrDefault();
-                switch (key.Key)
+                ConsoleKeyInfo key = Console.ReadKey(true);
+                if (!key.Modifiers.HasFlag(ConsoleModifiers.Shift))
                 {
-                    case ConsoleKey.LeftArrow:
 
-                        if (pos != null && CanMove(TypeDeplacement.Left))
-                            ConsoleWriter.Left(pos);
-                        break;
-                    case ConsoleKey.RightArrow:
+                    switch (key.Key)
+                    {
+                        case ConsoleKey.LeftArrow:
 
-                        if (pos != null && CanMove(TypeDeplacement.Right))
-                            ConsoleWriter.Right(pos);
-                        else
+                            if (pos != null && CanMove(TypeDeplacement.Left))
+                                ConsoleWriter.Left(pos);
+                            else
+                                isMoved = false;
+                            break;
+                        case ConsoleKey.RightArrow:
+
+                            if (pos != null && CanMove(TypeDeplacement.Right))
+                                ConsoleWriter.Right(pos);
+                            else
+                                isMoved = false;
+                            break;
+                        case ConsoleKey.UpArrow:
+                            if (pos != null && CanMove(TypeDeplacement.Up))
+                                ConsoleWriter.Up(pos);
+                            else
+                                isMoved = false;
+                            break;
+                        case ConsoleKey.DownArrow:
+                            if (pos != null && CanMove(TypeDeplacement.Down))
+
+                                ConsoleWriter.Down(pos);
+                            else
+                                isMoved = false;
+                            break;
+                        
+                        default:
+                            if ((key.Modifiers & ConsoleModifiers.Control) != 0)
+                            {
+                                Console.Write("Ctrl + ");
+                            }
                             isMoved = false;
-                        break;
-                    case ConsoleKey.UpArrow:
-                        if (pos != null && CanMove(TypeDeplacement.Up))
-                            ConsoleWriter.Up(pos);
-                        else
-                            isMoved = false;
-                        break;
-                    case ConsoleKey.DownArrow:
+                           
+                            break;
 
-                        if (pos != null && CanMove(TypeDeplacement.Down))
-                            ConsoleWriter.Down(pos);
-                        else
-                            isMoved = false;
-                        break;
-
-                    default:
-                        break;
-
+                    }
+                    if (isMoved )
+                    {
+                        listPosition.Where(p => p.Personnage.TypePersonnage != TypePersonnage.Ennemie).FirstOrDefault().TopCursorPosition = Console.CursorTop;
+                        listPosition.Where(p => p.Personnage.TypePersonnage != TypePersonnage.Ennemie).FirstOrDefault().LeftCursorPosition = Console.CursorLeft - 3;
+                        isMonTour = false;
+                        isMoved = false;
+                        Thread.Sleep(1000);
+                        MoveEnnemie();
+                    }
                 }
-                if (isMoved)
-                {
-                    listPosition.Where(p => p.Personnage.TypePersonnage != TypePersonnage.Ennemie).FirstOrDefault().TopCursorPosition = Console.CursorTop;
-                    listPosition.Where(p => p.Personnage.TypePersonnage != TypePersonnage.Ennemie).FirstOrDefault().LeftCursorPosition = Console.CursorLeft - 3;
-                    isMonTour = false;
-                    Thread.Sleep(1000);
-                    MoveEnnemie();
-                }
+                else
+                    isAttack = RunAttack(key,pos);
+
+
 
             }
+        }
+
+        private static bool RunAttack(ConsoleKeyInfo key, Position pos)
+        {
+            attaqueService = serviceProvider.GetService<IAttaqueService>();
+            bool isAttack = true;
+                switch (key.Key)
+                {
+                    case ConsoleKey.L:
+                    if (pos != null && CanAttack(TypeDeplacement.Left))
+                        ConsoleWriter.LeftAttack(currentPersonnage, pos, listPosition) ;
+                    else
+                        isAttack = false;
+                    return isAttack;
+                    break;
+                    case ConsoleKey.P:
+                    if (pos != null && CanAttack(TypeDeplacement.Left))
+                        ConsoleWriter.RigthAttack(currentPersonnage, pos, listPosition);
+                    else
+                        isAttack = false;
+                    return isAttack;
+                    break;
+                    case ConsoleKey.Q:
+                    if (pos != null && CanAttack(TypeDeplacement.Up))
+                       ConsoleWriter.UpAttack(currentPersonnage, pos, listPosition);
+                    else
+                        isAttack = false;
+                    return isAttack;
+                    break;
+                    case ConsoleKey.A:
+                    if (pos != null && CanAttack(TypeDeplacement.Down))
+                        ConsoleWriter.DownAttack(currentPersonnage, pos, listPosition);
+                    else
+                            isAttack = false;
+                        return isAttack;
+                    break;
+
+                    default:
+                    return isAttack;
+                    break;
 
 
+                    
+               
+            }
+                
+        }
 
-
-
-
+        private static bool CanAttack(TypeDeplacement right)
+        {
+            return true;
         }
 
         private static void MoveEnnemie()
@@ -226,6 +292,7 @@ namespace JeuStarWars
         private static void ChoisirPersonnage()
 
         {
+
             ConsoleWriter.SetEmptyLine(2);
             List<string> listContent = new List<string>()
             {
@@ -256,6 +323,7 @@ namespace JeuStarWars
             i = int.Parse(Console.ReadLine());
 
             currentPersonnage = new Personnage(listePersonnage.ElementAt(i));
+
         }
 
         public static void SetConsoleEntete()
