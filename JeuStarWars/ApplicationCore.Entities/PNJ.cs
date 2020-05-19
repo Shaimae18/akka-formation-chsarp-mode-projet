@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Entities
 {
-    public class PNJ
+    public class PNJ:PersonnageJoueur
     {
     }
 }
