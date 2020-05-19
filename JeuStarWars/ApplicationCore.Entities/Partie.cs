@@ -6,6 +6,12 @@ namespace Entities
 {
     public class Partie
     {
-        public Partie() { }
+        List<Joueur> ListJoueurs { get; set; }
+        int nbrTours;
+        public Partie() 
+        {
+       
+        }
+
     }
 }

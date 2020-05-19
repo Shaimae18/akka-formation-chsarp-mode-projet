@@ -15,23 +15,7 @@ namespace ApplicationCore.services
 
         
 
-        public IEnumerable<Position> GetInitialPosition(Personnage currentPersonnage, int nombreEnnemie)
-        {
-            return new List<Position>()
-            {
-                new Position(2,9,currentPersonnage),
-                new Position(1,6),
-                new Position(3,4),
-                new Position(10,2),
-                new Position(6,9),
-                new Position(7,2),
-                new Position(9,3),
-                new Position(6,1),
-                new Position(5,4),
-                new Position(1,1),
-                new Position(0,10),
-            };
-        }
+       
         public bool CheckMoveValidity(TypeDeplacement typeDeplacement, Position currentPos, Grille grille)
         {
             switch (typeDeplacement)
@@ -70,7 +54,7 @@ namespace ApplicationCore.services
         {
             Dictionary<TypeDeplacement, Position> dictDeplacement = new Dictionary<TypeDeplacement, Position>();
             Dictionary<TypeDeplacement, double> dictDist = new Dictionary<TypeDeplacement, double>();
-            Position pos = GetLePlusProcheEnnemie(currentPosition, listPosition.Where(p => p.Personnage.TypePersonnage == TypePersonnage.Ennemie));
+            Position pos = GetLePlusProcheEnnemie(currentPosition, listPosition.Where(p => p.Joueur.TypeJoueur == TypeJoueur.Adversaire && p.Joueur.Etat != Etat.Mort));
             Position positionAfterDep = new Position(null, null);
 
             #region Up

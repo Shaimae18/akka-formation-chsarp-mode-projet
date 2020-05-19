@@ -7,12 +7,9 @@ namespace ApplicationCore.services
 {
     public interface IPersonnageService
     {
-        IEnumerable<Personnage> GetAllPersonnages();
-        IEnumerable<Personnage> GetPersonnagesByCote(Cote cote);
-        Personnage ChoisirPersonnages();
-        bool DeplacerPersonnage(Personnage personnage, Position nouvellePos);
-        bool SetPersonnagePosition(Position pos, Personnage personnage);
-        
+        IEnumerable<PersonnageJoueur> GetAllPersonnages();
+        IEnumerable<PersonnageJoueur> GetPersonnagesByCote(Cote cote);
+       
 
     }
 }

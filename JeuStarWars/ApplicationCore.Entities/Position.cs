@@ -11,14 +11,20 @@ namespace Entities
         public int? Y { get; set; }
         public int LeftCursorPosition { get; set; }
         public int TopCursorPosition { get; set; }
-        public Personnage Personnage { get; set; }
+        public Joueur Joueur { get; set; }
 
        
-        public Position(int? x, int? y, Personnage personnage=null)
+        public Position(int? x, int? y, Joueur joueur=null)
         {
             this.X = x;
             this.Y = y;
-            this.Personnage= personnage ?? new Personnage("");
+            this.Joueur= joueur ?? new Joueur();
+        }
+        public Position(int LeftCursorPosition, int topCursorPosition)
+        {
+            this.LeftCursorPosition = LeftCursorPosition;
+            this.TopCursorPosition= topCursorPosition;
+            
         }
     }
 
