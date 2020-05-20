@@ -329,6 +329,7 @@ namespace JeuStarWars
                     }
                     if (isMoved)
                     {
+                        currentJoueur.CanAttack = true;
                         _listPosition.Where(p => p.Joueur.TypeJoueur == TypeJoueur.Joueur).FirstOrDefault().TopCursorPosition = currentPositionJoueur.TopCursorPosition = Console.CursorTop;
                         _listPosition.Where(p => p.Joueur.TypeJoueur == TypeJoueur.Joueur).FirstOrDefault().LeftCursorPosition = currentPositionJoueur.LeftCursorPosition = Console.CursorLeft - 3;
                         _isMonTour = false;
@@ -337,10 +338,13 @@ namespace JeuStarWars
                         TourAdversaire(currentPositionJoueur);
 
                     }
-                    
+
                 }
                 else
+                {
                     isAttack = RunAttack(key, currentPositionJoueur);
+                }
+                    
 
 
 
@@ -395,7 +399,7 @@ namespace JeuStarWars
                 if (pos != null)
                 {
                     List<Position> listPosAuChampsDatt = _attaqueService.GetChampsDattaques(pos, 1, grille);
-                    if (_attaqueService.JoueurIsInChampsAttaque(currentPositionJoueur, listPosAuChampsDatt))
+                    if (_attaqueService.JoueurIsInChampsAttaque(currentPositionJoueur, listPosAuChampsDatt) && pos.Joueur.CanAttack)
                     {
                         bool isDead = _attaqueService.Attaquer(pos.Joueur, currentJoueur);
                         ConsoleWriter.AttaquerJoueur(pos, currentPositionJoueur, isDead);
@@ -403,6 +407,7 @@ namespace JeuStarWars
                             _isGameOver = true;
                         else
                             ActualiserBarEtat();
+                        pos.Joueur.CanAttack = false;
                     }
 
                     else
@@ -419,6 +424,7 @@ namespace JeuStarWars
 
         private static void MoveEnnemie(Position posEnnemie)
         {
+            posEnnemie.Joueur.CanAttack = true;
             var currentJoueurPosition = _listPosition.Where(p => p.Joueur.TypeJoueur == TypeJoueur.Joueur).FirstOrDefault();
             Dictionary<TypeDeplacement, Position> dictPos = _deplacementService.DeplacerLePlusProcheEnnemie(currentJoueurPosition, posEnnemie, _listPosition, grille);
             if (dictPos.Any())
@@ -443,29 +449,33 @@ namespace JeuStarWars
         }
         private static bool RunAttack(ConsoleKeyInfo key, Position currentJoueurPosition)
         {
-            bool isAttack = true;
-            switch (key.Key)
+            if (currentJoueur.CanAttack == true)
             {
-                case ConsoleKey.A:
-                    if (currentJoueurPosition != null)
-                    {
-                        // dynamic border = new { LeftBorder = grille.LeftBorder, RightBorder = grille.RightBorder, TopBorder = grille.TopBorder, BottomBorder = grille.BottomBorder };
-                        List<Position> listPosAuChampsDatt = _attaqueService.GetChampsDattaques(currentJoueurPosition, currentJoueur.Portee, grille);
-                        Position adversairAattaquerPos = _attaqueService.GetAdversaireAattaquer(_listPosition, listPosAuChampsDatt);
-                        if (adversairAattaquerPos != null)
-                            ConsoleWriter.Attaquer(currentJoueurPosition, adversairAattaquerPos, _attaqueService.Attaquer(currentJoueur, adversairAattaquerPos.Joueur));
-                        ActualiserBarEtat();
-                        
+                bool isAttack = true;
+                switch (key.Key)
+                {
+                    case ConsoleKey.A:
+                        if (currentJoueurPosition != null)
+                        {
+                            // dynamic border = new { LeftBorder = grille.LeftBorder, RightBorder = grille.RightBorder, TopBorder = grille.TopBorder, BottomBorder = grille.BottomBorder };
+                            List<Position> listPosAuChampsDatt = _attaqueService.GetChampsDattaques(currentJoueurPosition, currentJoueur.Portee, grille);
+                            Position adversairAattaquerPos = _attaqueService.GetAdversaireAattaquer(_listPosition, listPosAuChampsDatt);
+                            if (adversairAattaquerPos != null)
+                                ConsoleWriter.Attaquer(currentJoueurPosition, adversairAattaquerPos, _attaqueService.Attaquer(currentJoueur, adversairAattaquerPos.Joueur));
+                            ActualiserBarEtat();
+                            currentJoueur.CanAttack = false;
 
-                    }
-                    else
-                        isAttack = false;
-                    return isAttack;
-                case ConsoleKey.S:
-                    return true;
-                default:
-                    return false;
+                        }
+                        else
+                            isAttack = false;
+                        return isAttack;
+                    case ConsoleKey.S:
+                        return true;
+                    default:
+                        return false;
+                }
             }
+            return false;
 
         }
 

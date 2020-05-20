@@ -14,6 +14,7 @@ namespace Entities
         public int? Portee { get; set; }
         public int? Degat { get; set; }
         public TypePersonnage TypePersonnage { get; set; }
+
         // private Personnage[] _personnages { get; set;};
 
         //public Personnage(Personnage[] pArray)
@@ -45,7 +46,7 @@ namespace Entities
             this.Portee = portee;
             this.Degat = degat;
             this.TypePersonnage = typePersonnage;
-
+            this.CanAttack = true;
         }
 
         public PersonnageJoueur(PersonnageJoueur personnage)
@@ -57,6 +58,7 @@ namespace Entities
             this.Portee = personnage.Portee;
             this.Degat = personnage.Degat;
             this.TypePersonnage = personnage.TypePersonnage;
+            this.CanAttack = true;
         }
 
         public PersonnageJoueur()
@@ -66,7 +68,7 @@ namespace Entities
         {
             StringBuilder stringBuilder = new StringBuilder();
             //stringBuilder.Append("╔═══════════════════╗╔═══════════════════╗╔═══════════════════╗╔═══════════════════╗╔═══════════════════╗╔═══════════════════╗");
-            //stringBuilder.Append("║      Pseudo       ║║        Côté       ║║    Points de vie  ║║   Points de Magie ║║       Portée      ║║        Degat      ║");
+            //stringBuilder.Append("║      Pseudo       ║║        Côté       ║║   Points de vie   ║║  Points de Magie  ║║       Portée      ║║        Degat      ║");
             //stringBuilder.Append("╚═══════════════════╝╚═══════════════════╝╚═══════════════════╝╚═══════════════════╝╚═══════════════════╝╚═══════════════════╝");
             stringBuilder.Append($" Joueur: {Pseudo}  PV: {PointsVie}  PM: {PointsMagie}   Portée: {Portee}   Dégats: {Degat} ");
             return stringBuilder.ToString();
