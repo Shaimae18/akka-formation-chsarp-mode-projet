@@ -340,8 +340,8 @@ namespace JeuStarWars
                     }
                     if (isMoved)
                     {
-                     
-                       _listPosition.Where(p => p.Joueur.TypeJoueur == TypeJoueur.Joueur).FirstOrDefault().TopCursorPosition = currentPositionJoueur.TopCursorPosition = Console.CursorTop;
+                    currentJoueur.CanAttack = true;
+                    _listPosition.Where(p => p.Joueur.TypeJoueur == TypeJoueur.Joueur).FirstOrDefault().TopCursorPosition = currentPositionJoueur.TopCursorPosition = Console.CursorTop;
                         _listPosition.Where(p => p.Joueur.TypeJoueur == TypeJoueur.Joueur).FirstOrDefault().LeftCursorPosition = currentPositionJoueur.LeftCursorPosition = Console.CursorLeft - 3;
                         _isMonTour = false;
                         isMoved = false;
@@ -454,34 +454,38 @@ namespace JeuStarWars
         {
             bool isJoueurDead = false;
             bool isAdversaireDead = false;
+           
             if (currentJoueurPosition != null)
             {
                 List<Position> listPosAuChampsDatt = _attaqueService.GetChampsDattaques(currentJoueurPosition, currentJoueur.Portee, grille);
                 Position adversairAattaquerPos = _attaqueService.GetAdversaireAattaquer(_listPosition, listPosAuChampsDatt);
                 if (adversairAattaquerPos != null)
                 {
-                    
                     do
                     {
+                       
                         InitializerNouveauTour(ActionTour.Attaque);
                         tour.JoueurEnAttaque = currentJoueur;
                         tour.JoueurEndefense = adversairAattaquerPos.Joueur;
-
                         SetTourInfo();
                         isAdversaireDead = _attaqueService.Attaquer(currentJoueur, adversairAattaquerPos.Joueur);
                         ConsoleWriter.Attaquer(currentJoueurPosition, adversairAattaquerPos, isAdversaireDead);
                         ActualiserBarEtat(currentJoueur);
+                        
+
                         if (isAdversaireDead)
                             return adversairAattaquerPos.Joueur;
                         Thread.Sleep(2000);
                         InitializerNouveauTour(ActionTour.Attaque);
-                        tour.JoueurEnAttaque = adversairAattaquerPos.Joueur; 
-                        tour.JoueurEndefense = currentJoueur; 
+                        tour.JoueurEnAttaque = adversairAattaquerPos.Joueur;
+                        tour.JoueurEndefense = currentJoueur;
                         SetTourInfo();
                         isJoueurDead = _attaqueService.Attaquer(adversairAattaquerPos.Joueur, currentJoueur);
-                        ConsoleWriter.Attaquer(adversairAattaquerPos,currentJoueurPosition, isJoueurDead);
+                        ConsoleWriter.Attaquer(adversairAattaquerPos, currentJoueurPosition, isJoueurDead);
                         ActualiserBarEtat(adversairAattaquerPos.Joueur);
-                    } while (!isJoueurDead && !isAdversaireDead);
+
+                        currentJoueur.CanAttack = false;
+                    } while (!isJoueurDead && !isAdversaireDead && !Console.KeyAvailable) ;
                    
                 }
                 if (isJoueurDead)
