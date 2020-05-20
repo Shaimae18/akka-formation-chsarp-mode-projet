@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Entities
 {
-    public class Joueur
+    public class Joueur : Personnage
     {
         public PersonnageJoueur PersonnageJoueur { get; set; }
         public TypeJoueur TypeJoueur { get; set; }
