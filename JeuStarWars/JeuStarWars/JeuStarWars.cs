@@ -16,9 +16,12 @@ namespace JeuStarWars
         public static ServiceProvider serviceProvider;
         public static int nombreEnnemie = 10;
         public static Joueur currentJoueur;
+        public static Partie partie;
+        public static Tour tour;
         public static Grille grille;
         private static dynamic _headerCursorPosition;
         private static dynamic _barreEtatCrsorPosition;
+        private static dynamic _barreTourPosition;
         private static IEnumerable<Position> _listPosition;
         private static IDeplacementService _deplacementService;
         private static IGrilleService _grilleService;
@@ -27,6 +30,7 @@ namespace JeuStarWars
         private static bool _isMonTour;
         private static bool _isGameOver;
         private static bool _isPartieGagner;
+        private static int _nbrTour=0;
 
         static void Main(string[] args)
         {
@@ -119,6 +123,8 @@ namespace JeuStarWars
         }
         private static void NouvellePartie()
         {
+            partie = new Partie();
+            
 
             Console.SetCursorPosition(_headerCursorPosition.posLeft, _headerCursorPosition.posTop);
             ReintialiseCursorPos();
@@ -128,7 +134,7 @@ namespace JeuStarWars
             ReintialiseCursorPos();
             SetInstruction();
             _barreEtatCrsorPosition = new { posLeft = Console.CursorLeft, posTop = Console.CursorTop };
-            SetJoueurInfo();
+            SetJoueurInfo(currentJoueur);
             _isMonTour = true;
             _isGameOver = false;
             _isPartieGagner = false;
@@ -137,6 +143,7 @@ namespace JeuStarWars
             _attaqueService = serviceProvider.GetService<IAttaqueService>();
             _listPosition = _grilleService.GetInitialPositionInGrille(currentJoueur, nombreEnnemie);
             grille = ConsoleWriter.SetGrille(18, 10, _listPosition);
+            _barreTourPosition = new { posLeft = Console.CursorLeft, posTop = Console.CursorTop };
             RunTour();
         }
         private static void Prologue()
@@ -270,32 +277,37 @@ namespace JeuStarWars
             };
             ConsoleWriter.SetFrame(listContent, 90, 30);
         }
-        private static void SetJoueurInfo(ConsoleColor color = ConsoleColor.Green)
+        private static void SetJoueurInfo(Joueur joueur, ConsoleColor color = ConsoleColor.Green)
         {
-
             List<string> listContent = new List<string>()
             {
-               currentJoueur.ToString()
+               joueur.ToString()
             };
             ConsoleWriter.SetFrame(listContent, 90, 30,color: color);
         }
+
+       
         private static void RunTour()
         {
-
-
             while (_isMonTour && !_isGameOver && !_isPartieGagner)
             {
+                
                 bool isMoved = true;
-                bool isAttack = false;
                 var currentPositionJoueur = _listPosition.Where(p => p.Joueur.TypeJoueur == TypeJoueur.Joueur).FirstOrDefault();
+                Joueur joueurMort = RunAttack(currentPositionJoueur);
+
+                if (joueurMort!= null && joueurMort.TypeJoueur == TypeJoueur.Joueur)
+                    _isGameOver = true;
+                InitializerNouveauTour(ActionTour.Deplacement);
+                tour.JoueurEnAttaque = currentJoueur;
+                tour.message = " déplacez-vous à l'aide des touches directionnelles(← ↓ → ↑).";
+                SetTourInfo();
+
                 ConsoleKeyInfo key = Console.ReadKey(true);
-                if (!key.Modifiers.HasFlag(ConsoleModifiers.Shift))
-                {
                     switch (key.Key)
                     {
                         case ConsoleKey.LeftArrow:
-
-                            if (currentPositionJoueur != null && CanMove(TypeDeplacement.Left, currentPositionJoueur))
+                        if (currentPositionJoueur != null && CanMove(TypeDeplacement.Left, currentPositionJoueur))
                                 ConsoleWriter.Left(currentPositionJoueur);
                             else
                                 isMoved = false;
@@ -323,24 +335,21 @@ namespace JeuStarWars
 
                         default:
                             isMoved = false;
-
                             break;
 
                     }
                     if (isMoved)
                     {
-                        _listPosition.Where(p => p.Joueur.TypeJoueur == TypeJoueur.Joueur).FirstOrDefault().TopCursorPosition = currentPositionJoueur.TopCursorPosition = Console.CursorTop;
+                     
+                       _listPosition.Where(p => p.Joueur.TypeJoueur == TypeJoueur.Joueur).FirstOrDefault().TopCursorPosition = currentPositionJoueur.TopCursorPosition = Console.CursorTop;
                         _listPosition.Where(p => p.Joueur.TypeJoueur == TypeJoueur.Joueur).FirstOrDefault().LeftCursorPosition = currentPositionJoueur.LeftCursorPosition = Console.CursorLeft - 3;
                         _isMonTour = false;
                         isMoved = false;
                         Thread.Sleep(1000);
                         TourAdversaire(currentPositionJoueur);
-
-                    }
-                    
+                        Thread.Sleep(1000);
                 }
-                else
-                    isAttack = RunAttack(key, currentPositionJoueur);
+                    
 
 
 
@@ -357,8 +366,6 @@ namespace JeuStarWars
                     Console.Write(new string(' ', ((Console.WindowWidth - lenght) < 0 ? 0 : (Console.WindowWidth - lenght)) / 2));
                     Console.WriteLine(row);
                     
-                    
-
                 }
                 Console.ReadLine();
 
@@ -378,9 +385,18 @@ namespace JeuStarWars
                 }
                 Console.ReadLine();
             }
-            
 
         }
+
+        private static void InitializerNouveauTour(ActionTour mode)
+        {
+            tour = new Tour();
+            _nbrTour++;
+            tour.numeroDuTour = _nbrTour;
+            tour.ActionTour = mode;
+            partie.ListTours.Add(tour);
+        }
+
         private static bool CanMove(TypeDeplacement typeDeplacement, Position currentPositionJoueur)
         {
 
@@ -391,88 +407,106 @@ namespace JeuStarWars
         {
             if (_listPosition.Where(p => p.Joueur.TypeJoueur == TypeJoueur.Adversaire && p.Joueur.Etat != Etat.Mort).Any())
             {
-                Position pos = _deplacementService.GetLePlusProcheEnnemie(currentPositionJoueur, _listPosition.Where(p => p.Joueur.TypeJoueur == TypeJoueur.Adversaire && p.Joueur.Etat != Etat.Mort));
-                if (pos != null)
+                List<Dictionary<TypeDeplacement, Position>> listDeplacementAdv =  _deplacementService.DeplacerTousEnnemie(currentPositionJoueur, _listPosition,grille);
+                InitializerNouveauTour(ActionTour.Deplacement);
+                tour.JoueurEnAttaque = _listPosition.FirstOrDefault(p => p.Joueur.TypeJoueur == TypeJoueur.Adversaire && p.Joueur.Etat != Etat.Mort).Joueur;
+                listDeplacementAdv.ForEach(dictPos =>
                 {
-                    List<Position> listPosAuChampsDatt = _attaqueService.GetChampsDattaques(pos, 1, grille);
-                    if (_attaqueService.JoueurIsInChampsAttaque(currentPositionJoueur, listPosAuChampsDatt))
+                   Position currentPosition = _listPosition.Where(p => p.LeftCursorPosition == dictPos.First().Value.LeftCursorPosition && p.TopCursorPosition == dictPos.First().Value.TopCursorPosition).FirstOrDefault();
+                   
+                    SetTourInfo();
+                    
+                    switch (dictPos.First().Key)
                     {
-                        bool isDead = _attaqueService.Attaquer(pos.Joueur, currentJoueur);
-                        ConsoleWriter.AttaquerJoueur(pos, currentPositionJoueur, isDead);
-                        if (isDead)
-                            _isGameOver = true;
-                        else
-                            ActualiserBarEtat();
+                        case TypeDeplacement.Up:
+                            ConsoleWriter.Up(dictPos.First().Value, TypeJoueur.Adversaire);
+                            currentPosition.LeftCursorPosition = Console.CursorLeft - 3;
+                            currentPosition.TopCursorPosition = Console.CursorTop;
+                            break;
+                        case TypeDeplacement.Down:
+                            ConsoleWriter.Down(dictPos.First().Value, TypeJoueur.Adversaire);
+                            currentPosition.LeftCursorPosition = Console.CursorLeft-3;
+                            currentPosition.TopCursorPosition =  Console.CursorTop;
+                    
+                            break;
+                        case TypeDeplacement.Left:
+                            ConsoleWriter.Left(dictPos.First().Value, TypeJoueur.Adversaire);
+                            currentPosition.LeftCursorPosition = Console.CursorLeft - 3;
+                            currentPosition.TopCursorPosition = Console.CursorTop;
+                            break;
+                        case TypeDeplacement.Right:
+                            ConsoleWriter.Right(dictPos.First().Value, TypeJoueur.Adversaire);
+                            currentPosition.LeftCursorPosition = Console.CursorLeft - 3;
+                            currentPosition.TopCursorPosition = Console.CursorTop;
+                            break;
                     }
-
-                    else
-                        MoveEnnemie(pos);
-
+                  
                 }
+                );
+
                 _isMonTour = true;
             }
             else
                 _isPartieGagner = true;
            
         }
-
-
-        private static void MoveEnnemie(Position posEnnemie)
+        private static Joueur RunAttack(Position currentJoueurPosition)
         {
-            var currentJoueurPosition = _listPosition.Where(p => p.Joueur.TypeJoueur == TypeJoueur.Joueur).FirstOrDefault();
-            Dictionary<TypeDeplacement, Position> dictPos = _deplacementService.DeplacerLePlusProcheEnnemie(currentJoueurPosition, posEnnemie, _listPosition, grille);
-            if (dictPos.Any())
-                switch (dictPos.First().Key)
-                {
-                    case TypeDeplacement.Up:
-                        ConsoleWriter.Up(dictPos.First().Value, TypeJoueur.Adversaire);
-                        break;
-                    case TypeDeplacement.Down:
-                        ConsoleWriter.Down(dictPos.First().Value, TypeJoueur.Adversaire);
-                        break;
-                    case TypeDeplacement.Left:
-                        ConsoleWriter.Left(dictPos.First().Value, TypeJoueur.Adversaire);
-                        break;
-                    case TypeDeplacement.Right:
-                        ConsoleWriter.Right(dictPos.First().Value, TypeJoueur.Adversaire);
-                        break;
-                }
-            _listPosition.Where(p => p.LeftCursorPosition == dictPos.First().Value.LeftCursorPosition && p.TopCursorPosition == dictPos.First().Value.TopCursorPosition).FirstOrDefault().TopCursorPosition = Console.CursorTop;
-            _listPosition.Where(p => p.LeftCursorPosition == dictPos.First().Value.LeftCursorPosition && p.TopCursorPosition == dictPos.First().Value.TopCursorPosition).FirstOrDefault().LeftCursorPosition = Console.CursorLeft - 3;
-            _isMonTour = true;
-        }
-        private static bool RunAttack(ConsoleKeyInfo key, Position currentJoueurPosition)
-        {
-            bool isAttack = true;
-            switch (key.Key)
+            bool isJoueurDead = false;
+            bool isAdversaireDead = false;
+            if (currentJoueurPosition != null)
             {
-                case ConsoleKey.A:
-                    if (currentJoueurPosition != null)
+                List<Position> listPosAuChampsDatt = _attaqueService.GetChampsDattaques(currentJoueurPosition, currentJoueur.Portee, grille);
+                Position adversairAattaquerPos = _attaqueService.GetAdversaireAattaquer(_listPosition, listPosAuChampsDatt);
+                if (adversairAattaquerPos != null)
+                {
+                    
+                    do
                     {
-                        // dynamic border = new { LeftBorder = grille.LeftBorder, RightBorder = grille.RightBorder, TopBorder = grille.TopBorder, BottomBorder = grille.BottomBorder };
-                        List<Position> listPosAuChampsDatt = _attaqueService.GetChampsDattaques(currentJoueurPosition, currentJoueur.Portee, grille);
-                        Position adversairAattaquerPos = _attaqueService.GetAdversaireAattaquer(_listPosition, listPosAuChampsDatt);
-                        if (adversairAattaquerPos != null)
-                            ConsoleWriter.Attaquer(currentJoueurPosition, adversairAattaquerPos, _attaqueService.Attaquer(currentJoueur, adversairAattaquerPos.Joueur));
-                        ActualiserBarEtat();
-                        
+                        InitializerNouveauTour(ActionTour.Attaque);
+                        tour.JoueurEnAttaque = currentJoueur;
+                        tour.JoueurEndefense = adversairAattaquerPos.Joueur;
 
-                    }
-                    else
-                        isAttack = false;
-                    return isAttack;
-                case ConsoleKey.S:
-                    return true;
-                default:
-                    return false;
+                        SetTourInfo();
+                        isAdversaireDead = _attaqueService.Attaquer(currentJoueur, adversairAattaquerPos.Joueur);
+                        ConsoleWriter.Attaquer(currentJoueurPosition, adversairAattaquerPos, isAdversaireDead);
+                        ActualiserBarEtat(currentJoueur);
+                        if (isAdversaireDead)
+                            return adversairAattaquerPos.Joueur;
+                        Thread.Sleep(2000);
+                        InitializerNouveauTour(ActionTour.Attaque);
+                        tour.JoueurEnAttaque = adversairAattaquerPos.Joueur; 
+                        tour.JoueurEndefense = currentJoueur; 
+                        SetTourInfo();
+                        isJoueurDead = _attaqueService.Attaquer(adversairAattaquerPos.Joueur, currentJoueur);
+                        ConsoleWriter.Attaquer(adversairAattaquerPos,currentJoueurPosition, isJoueurDead);
+                        ActualiserBarEtat(adversairAattaquerPos.Joueur);
+                    } while (!isJoueurDead && !isAdversaireDead);
+                   
+                }
+                if (isJoueurDead)
+                    return currentJoueur;
+                else if (isAdversaireDead)
+                    return adversairAattaquerPos.Joueur;
+                else return null;
             }
-
+            else
+                return  null;
         }
 
-        private static void ActualiserBarEtat()
+        private static void ActualiserBarEtat(Joueur joueur)
         {
             ConsoleWriter.SetConsoleCursorPosition(_barreEtatCrsorPosition.posLeft, _barreEtatCrsorPosition.posTop);
-            SetJoueurInfo();
+            SetJoueurInfo(joueur);
+        }
+        private static void SetTourInfo()
+        {
+            ConsoleWriter.SetConsoleCursorPosition(_barreTourPosition.posLeft, _barreTourPosition.posTop);
+            List<string> listContent = new List<string>()
+            {
+               tour.ToString()
+            };
+            ConsoleWriter.SetFrame(listContent, 90, 30,ConsoleColor.Green);
         }
     }
 }
