@@ -49,14 +49,25 @@ namespace ApplicationCore.services
                     return false;
             }
         }
-
-        public Dictionary<TypeDeplacement, Position> DeplacerLePlusProcheEnnemie(Position currentPosition,Position posPlusProcheEnnemie, IEnumerable<Position> listPosition, Grille grille)
+        public Position GetLePlusProcheEnnemie(Position currentPosition, IEnumerable<Position> listPositionEnnemie)
+        {
+            Position posPlusProche = null;
+            double minDistance = Int32.MaxValue;
+            foreach(Position posEnnemie in listPositionEnnemie)
+            {
+                double distance = GetDistanceBetweenPos(currentPosition,posEnnemie);
+                minDistance = Math.Min(distance,minDistance);
+                if (minDistance == distance)
+                    posPlusProche = posEnnemie;
+            }
+            return posPlusProche;
+        }
+        public Dictionary<TypeDeplacement, Position> Deplacer(Position currentPosition, Position posPlusProcheEnnemie, IEnumerable<Position> listPosition, Grille grille)
         {
             Dictionary<TypeDeplacement, Position> dictDeplacement = new Dictionary<TypeDeplacement, Position>();
             Dictionary<TypeDeplacement, double> dictDist = new Dictionary<TypeDeplacement, double>();
             Position pos = posPlusProcheEnnemie;
             Position positionAfterDep = new Position(null, null);
-
             #region Up
             if (CheckMoveValidity(TypeDeplacement.Up, pos, grille)
                 && CheckIfCaseIsEmpty(TypeDeplacement.Up, pos, listPosition))
@@ -95,22 +106,20 @@ namespace ApplicationCore.services
             }
             #endregion
             var typeDepConvenable = dictDist.MinBy(x => x.Value).First().Key;
-            dictDeplacement.Add(typeDepConvenable,pos);
+            dictDeplacement.Add(typeDepConvenable, pos);
             return dictDeplacement;
         }
-
-        public Position GetLePlusProcheEnnemie(Position currentPosition, IEnumerable<Position> listPositionEnnemie)
+        public List<Dictionary<TypeDeplacement, Position>> DeplacerTousEnnemie(Position currentPositionJoueur, IEnumerable<Position> listPosition, Grille grille)
         {
-            Position posPlusProche = null;
-            double minDistance = Int32.MaxValue;
-            foreach(Position posEnnemie in listPositionEnnemie)
-            {
-                double distance = GetDistanceBetweenPos(currentPosition,posEnnemie);
-                minDistance = Math.Min(distance,minDistance);
-                if (minDistance == distance)
-                    posPlusProche = posEnnemie;
-            }
-            return posPlusProche;
+            List<Dictionary<TypeDeplacement, Position>> listDesDeplacementsPrevu = new List<Dictionary<TypeDeplacement, Position>>();
+            Dictionary<TypeDeplacement, Position> dictPos = new Dictionary<TypeDeplacement, Position>();
+            IEnumerable<Position> listPositionAdversaire = listPosition.Where(p => p.Joueur.TypeJoueur == TypeJoueur.Adversaire && p.Joueur.Etat != Etat.Mort);
+            listPositionAdversaire.ForEach(pos => 
+            { 
+                dictPos = Deplacer(currentPositionJoueur, pos, listPosition, grille);
+                listDesDeplacementsPrevu.Add(dictPos);
+            });
+            return listDesDeplacementsPrevu;
         }
         double GetDistanceBetweenPos(Position pos1 , Position pos2)
         {
