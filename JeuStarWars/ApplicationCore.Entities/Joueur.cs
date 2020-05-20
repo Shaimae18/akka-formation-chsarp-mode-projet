@@ -14,7 +14,7 @@ namespace Entities
         public int? Portee { get; set; }
         public int? Degat { get; set; }
         public Etat Etat { get; set; }
-        public bool CanAttack { get; set; }
+        public bool? OnAttack { get; set; }
 
         public override string ToString()
         {

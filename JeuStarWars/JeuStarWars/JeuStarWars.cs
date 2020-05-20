@@ -294,6 +294,7 @@ namespace JeuStarWars
                 
                 bool isMoved = true;
                 var currentPositionJoueur = _listPosition.Where(p => p.Joueur.TypeJoueur == TypeJoueur.Joueur).FirstOrDefault();
+
                 Joueur joueurMort = RunAttack(currentPositionJoueur);
 
                 if (joueurMort!= null && joueurMort.TypeJoueur == TypeJoueur.Joueur)
@@ -340,7 +341,7 @@ namespace JeuStarWars
                     }
                     if (isMoved)
                     {
-                    currentJoueur.CanAttack = true;
+                 
                     _listPosition.Where(p => p.Joueur.TypeJoueur == TypeJoueur.Joueur).FirstOrDefault().TopCursorPosition = currentPositionJoueur.TopCursorPosition = Console.CursorTop;
                         _listPosition.Where(p => p.Joueur.TypeJoueur == TypeJoueur.Joueur).FirstOrDefault().LeftCursorPosition = currentPositionJoueur.LeftCursorPosition = Console.CursorLeft - 3;
                         _isMonTour = false;
@@ -409,7 +410,7 @@ namespace JeuStarWars
             {
                 List<Dictionary<TypeDeplacement, Position>> listDeplacementAdv =  _deplacementService.DeplacerTousEnnemie(currentPositionJoueur, _listPosition,grille);
                 InitializerNouveauTour(ActionTour.Deplacement);
-                tour.JoueurEnAttaque = _listPosition.FirstOrDefault(p => p.Joueur.TypeJoueur == TypeJoueur.Adversaire && p.Joueur.Etat != Etat.Mort).Joueur;
+                tour.JoueurEnAttaque = _listPosition.FirstOrDefault(p => p.Joueur.TypeJoueur == TypeJoueur.Adversaire &&  p.Joueur.Etat != Etat.Mort).Joueur;
                 listDeplacementAdv.ForEach(dictPos =>
                 {
                    Position currentPosition = _listPosition.Where(p => p.LeftCursorPosition == dictPos.First().Value.LeftCursorPosition && p.TopCursorPosition == dictPos.First().Value.TopCursorPosition).FirstOrDefault();
@@ -455,6 +456,7 @@ namespace JeuStarWars
             bool isJoueurDead = false;
             bool isAdversaireDead = false;
            
+          
             if (currentJoueurPosition != null)
             {
                 List<Position> listPosAuChampsDatt = _attaqueService.GetChampsDattaques(currentJoueurPosition, currentJoueur.Portee, grille);
@@ -463,7 +465,9 @@ namespace JeuStarWars
                 {
                     do
                     {
-                       
+                        adversairAattaquerPos.Joueur.OnAttack = true;
+
+
                         InitializerNouveauTour(ActionTour.Attaque);
                         tour.JoueurEnAttaque = currentJoueur;
                         tour.JoueurEndefense = adversairAattaquerPos.Joueur;
@@ -471,10 +475,12 @@ namespace JeuStarWars
                         isAdversaireDead = _attaqueService.Attaquer(currentJoueur, adversairAattaquerPos.Joueur);
                         ConsoleWriter.Attaquer(currentJoueurPosition, adversairAattaquerPos, isAdversaireDead);
                         ActualiserBarEtat(currentJoueur);
-                        
 
                         if (isAdversaireDead)
                             return adversairAattaquerPos.Joueur;
+                        if (Console.KeyAvailable)
+                            return null;
+                        TourAdversaire(currentJoueurPosition);
                         Thread.Sleep(2000);
                         InitializerNouveauTour(ActionTour.Attaque);
                         tour.JoueurEnAttaque = adversairAattaquerPos.Joueur;
@@ -484,9 +490,9 @@ namespace JeuStarWars
                         ConsoleWriter.Attaquer(adversairAattaquerPos, currentJoueurPosition, isJoueurDead);
                         ActualiserBarEtat(adversairAattaquerPos.Joueur);
 
-                        currentJoueur.CanAttack = false;
-                    } while (!isJoueurDead && !isAdversaireDead && !Console.KeyAvailable) ;
                    
+                    } while (!isJoueurDead && !isAdversaireDead && !Console.KeyAvailable) ;
+                    adversairAattaquerPos.Joueur.OnAttack = false;
                 }
                 if (isJoueurDead)
                     return currentJoueur;

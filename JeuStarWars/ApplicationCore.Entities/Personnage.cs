@@ -9,6 +9,7 @@ namespace Entities
         public string Pseudo { get; set; }
         public Cote Cote { get; set; }
         public bool CanAttack { get; set; }
+
     }
     public enum Cote
     {
