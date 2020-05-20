@@ -113,7 +113,7 @@ namespace ApplicationCore.services
         {
             List<Dictionary<TypeDeplacement, Position>> listDesDeplacementsPrevu = new List<Dictionary<TypeDeplacement, Position>>();
             Dictionary<TypeDeplacement, Position> dictPos = new Dictionary<TypeDeplacement, Position>();
-            IEnumerable<Position> listPositionAdversaire = listPosition.Where(p => p.Joueur.TypeJoueur == TypeJoueur.Adversaire && p.Joueur.Etat != Etat.Mort);
+            IEnumerable<Position> listPositionAdversaire = listPosition.Where(p => p.Joueur.TypeJoueur == TypeJoueur.Adversaire && p.Joueur.OnAttack != true && p.Joueur.Etat != Etat.Mort);
             listPositionAdversaire.ForEach(pos => 
             { 
                 dictPos = Deplacer(currentPositionJoueur, pos, listPosition, grille);
