@@ -306,7 +306,10 @@ namespace JeuStarWars.Utilities
                     SetJoueurInCaseByPosition(ennemiChar, adversairAattaquerPos.LeftCursorPosition + 1, adversairAattaquerPos.TopCursorPosition, colorAdversaire, 100);
                    
                 }
-
+                Console.SetCursorPosition(adversairAattaquerPos.LeftCursorPosition, adversairAattaquerPos.TopCursorPosition);
+                SetJoueurInCaseByPosition(" ", adversairAattaquerPos.LeftCursorPosition, adversairAattaquerPos.TopCursorPosition, colorAdversaire, 0);
+                Console.SetCursorPosition(adversairAattaquerPos.LeftCursorPosition, adversairAattaquerPos.TopCursorPosition);
+                SetJoueurInCaseByPosition(" ", adversairAattaquerPos.LeftCursorPosition + 2, adversairAattaquerPos.TopCursorPosition, colorAdversaire, 100);
             }
 
 
