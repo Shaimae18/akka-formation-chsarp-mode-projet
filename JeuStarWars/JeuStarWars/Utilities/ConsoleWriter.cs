@@ -247,53 +247,70 @@ namespace JeuStarWars.Utilities
 
         public static void Attaquer(Position currentJourPosition, Position adversairAattaquerPos, bool isDead = true)
         {
+            ConsoleColor colorJoueur = currentJourPosition.Joueur.TypeJoueur == TypeJoueur.Adversaire ? ConsoleColor.Red : (currentJourPosition.Joueur.PersonnageJoueur.TypePersonnage == TypePersonnage.LanceurDeSort ? ConsoleColor.DarkYellow : ConsoleColor.Blue);
+            ConsoleColor colorAdversaire = adversairAattaquerPos.Joueur.TypeJoueur == TypeJoueur.Adversaire ? ConsoleColor.Red : (adversairAattaquerPos.Joueur.PersonnageJoueur.TypePersonnage == TypePersonnage.LanceurDeSort ? ConsoleColor.DarkYellow : ConsoleColor.Blue);
             for (int i = 0; i < 5; i++)
             {
                 Console.SetCursorPosition(currentJourPosition.LeftCursorPosition, currentJourPosition.TopCursorPosition);
-                SetJoueurInCaseByPosition(lanceAttaqueChar, currentJourPosition.LeftCursorPosition, currentJourPosition.TopCursorPosition, ConsoleColor.Magenta, 0);
+                SetJoueurInCaseByPosition(lanceAttaqueChar, currentJourPosition.LeftCursorPosition, currentJourPosition.TopCursorPosition, colorJoueur, 0);
                 Console.SetCursorPosition(currentJourPosition.LeftCursorPosition + 2, currentJourPosition.TopCursorPosition);
-                SetJoueurInCaseByPosition(lanceAttaqueChar, currentJourPosition.LeftCursorPosition + 2, currentJourPosition.TopCursorPosition, ConsoleColor.Magenta, 200);
+                SetJoueurInCaseByPosition(lanceAttaqueChar, currentJourPosition.LeftCursorPosition + 2, currentJourPosition.TopCursorPosition, colorJoueur, 200);
                 Console.SetCursorPosition(currentJourPosition.LeftCursorPosition + 2, currentJourPosition.TopCursorPosition);
 
                 Console.SetCursorPosition(currentJourPosition.LeftCursorPosition, currentJourPosition.TopCursorPosition);
-                SetJoueurInCaseByPosition(" ", currentJourPosition.LeftCursorPosition, currentJourPosition.TopCursorPosition, ConsoleColor.Magenta, 0);
+                SetJoueurInCaseByPosition(" ", currentJourPosition.LeftCursorPosition, currentJourPosition.TopCursorPosition, colorJoueur, 0);
                 Console.SetCursorPosition(currentJourPosition.LeftCursorPosition + 2, currentJourPosition.TopCursorPosition);
-                SetJoueurInCaseByPosition(" ", currentJourPosition.LeftCursorPosition + 2, currentJourPosition.TopCursorPosition, ConsoleColor.Magenta, 200);
+                SetJoueurInCaseByPosition(" ", currentJourPosition.LeftCursorPosition + 2, currentJourPosition.TopCursorPosition, colorJoueur, 200);
 
             }
             Console.SetCursorPosition(currentJourPosition.LeftCursorPosition + 1, currentJourPosition.TopCursorPosition);
-            if (currentJourPosition.Joueur.PersonnageJoueur.TypePersonnage == TypePersonnage.LanceurDeSort)
-                SetJoueurInCaseByPosition(specialHeroChar, currentJourPosition.LeftCursorPosition + 1, currentJourPosition.TopCursorPosition, ConsoleColor.DarkYellow, 100);
-            else
-                SetJoueurInCaseByPosition(specialHeroChar, currentJourPosition.LeftCursorPosition + 1, currentJourPosition.TopCursorPosition, ConsoleColor.Blue, 100);
+             SetJoueurInCaseByPosition(specialHeroChar, currentJourPosition.LeftCursorPosition + 1, currentJourPosition.TopCursorPosition, colorJoueur, 100);
+        
 
 
-            if (isDead)
-            {
-                for (int i = 0; i < 6; i++)
+
+            for (int i = 0; i <10; i++)
                 {
-                    Console.SetCursorPosition(adversairAattaquerPos.LeftCursorPosition + 1, adversairAattaquerPos.TopCursorPosition);
-                    SetJoueurInCaseByPosition(" ", adversairAattaquerPos.LeftCursorPosition + 1, adversairAattaquerPos.TopCursorPosition, ConsoleColor.Red, 100);
-                    Console.SetCursorPosition(adversairAattaquerPos.LeftCursorPosition + 1, adversairAattaquerPos.TopCursorPosition);
-                    SetJoueurInCaseByPosition(attaqueChar, adversairAattaquerPos.LeftCursorPosition + 1, adversairAattaquerPos.TopCursorPosition, ConsoleColor.Red, 100);
+                   
+                    Console.SetCursorPosition(adversairAattaquerPos.LeftCursorPosition , adversairAattaquerPos.TopCursorPosition);
+                    SetJoueurInCaseByPosition(attaqueChar, adversairAattaquerPos.LeftCursorPosition , adversairAattaquerPos.TopCursorPosition, colorJoueur, 50);
 
-                }
-                Console.SetCursorPosition(adversairAattaquerPos.LeftCursorPosition + 1, adversairAattaquerPos.TopCursorPosition);
-                SetJoueurInCaseByPosition(adversaireMort, adversairAattaquerPos.LeftCursorPosition + 1, adversairAattaquerPos.TopCursorPosition, ConsoleColor.Red, 0);
+                    Console.SetCursorPosition(adversairAattaquerPos.LeftCursorPosition, adversairAattaquerPos.TopCursorPosition);
+                    SetJoueurInCaseByPosition(attaqueChar, adversairAattaquerPos.LeftCursorPosition + 1, adversairAattaquerPos.TopCursorPosition, colorJoueur, 50);
+
+                    Console.SetCursorPosition(adversairAattaquerPos.LeftCursorPosition, adversairAattaquerPos.TopCursorPosition);
+                    SetJoueurInCaseByPosition(attaqueChar, adversairAattaquerPos.LeftCursorPosition + 2, adversairAattaquerPos.TopCursorPosition, colorJoueur, 50);
+
+                   Console.SetCursorPosition(adversairAattaquerPos.LeftCursorPosition + 1, adversairAattaquerPos.TopCursorPosition);
+                   SetJoueurInCaseByPosition(" ", adversairAattaquerPos.LeftCursorPosition + 1, adversairAattaquerPos.TopCursorPosition, colorJoueur, 50);
             }
-            else
+                if(isDead)
             {
-                for (int i = 0; i < 8; i++)
-                {
-                    Console.SetCursorPosition(adversairAattaquerPos.LeftCursorPosition + 1, adversairAattaquerPos.TopCursorPosition);
-                    SetJoueurInCaseByPosition(" ", adversairAattaquerPos.LeftCursorPosition + 1, adversairAattaquerPos.TopCursorPosition, ConsoleColor.Red, 100);
-                    Console.SetCursorPosition(adversairAattaquerPos.LeftCursorPosition + 1, adversairAattaquerPos.TopCursorPosition);
-                    SetJoueurInCaseByPosition(ennemiChar, adversairAattaquerPos.LeftCursorPosition + 1, adversairAattaquerPos.TopCursorPosition, ConsoleColor.Red, 100);
-
-                }
-               
+                
+                Console.SetCursorPosition(adversairAattaquerPos.LeftCursorPosition, adversairAattaquerPos.TopCursorPosition);
+                SetJoueurInCaseByPosition(" ", adversairAattaquerPos.LeftCursorPosition, adversairAattaquerPos.TopCursorPosition, colorAdversaire, 0);
+                Console.SetCursorPosition(adversairAattaquerPos.LeftCursorPosition, adversairAattaquerPos.TopCursorPosition);
+                SetJoueurInCaseByPosition(" ", adversairAattaquerPos.LeftCursorPosition + 2, adversairAattaquerPos.TopCursorPosition, colorAdversaire, 100);
+                Console.SetCursorPosition(adversairAattaquerPos.LeftCursorPosition, adversairAattaquerPos.TopCursorPosition);
+                SetJoueurInCaseByPosition(adversaireMort, adversairAattaquerPos.LeftCursorPosition + 1, adversairAattaquerPos.TopCursorPosition, colorAdversaire, 100);
             }
-           
+               else
+            {
+                for (int i = 0; i <3; i++)
+                {
+                    Console.SetCursorPosition(adversairAattaquerPos.LeftCursorPosition, adversairAattaquerPos.TopCursorPosition);
+                    SetJoueurInCaseByPosition("[", adversairAattaquerPos.LeftCursorPosition, adversairAattaquerPos.TopCursorPosition, colorAdversaire, 0);
+                    Console.SetCursorPosition(adversairAattaquerPos.LeftCursorPosition, adversairAattaquerPos.TopCursorPosition);
+                    SetJoueurInCaseByPosition("]", adversairAattaquerPos.LeftCursorPosition + 2, adversairAattaquerPos.TopCursorPosition, colorAdversaire, 100);
+                    Console.SetCursorPosition(adversairAattaquerPos.LeftCursorPosition, adversairAattaquerPos.TopCursorPosition);
+                    SetJoueurInCaseByPosition(ennemiChar, adversairAattaquerPos.LeftCursorPosition + 1, adversairAattaquerPos.TopCursorPosition, colorAdversaire, 100);
+                   
+                }
+
+            }
+
+
+
         }
 
         public static void AttaquerJoueur(Position pos, Position adversairAattaquerPos, bool isDead = false)
