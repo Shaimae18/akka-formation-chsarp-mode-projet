@@ -105,7 +105,7 @@ namespace JeuStarWars.Utilities
                         switch (pos.Joueur.TypeJoueur)
                         {
                             case TypeJoueur.Joueur:
-                                if (pos.Joueur.PersonnageJoueur.TypePersonnage == TypePersonnage.NonLanceurDeSort)
+                                if (pos.Joueur.Personnage.TypePersonnage == TypePersonnage.NonLanceurDeSort)
                                     SetJoueurInCase(heroChar, ConsoleColor.Blue);
                                 else
                                     SetJoueurInCase(specialHeroChar, ConsoleColor.DarkYellow);
@@ -202,7 +202,7 @@ namespace JeuStarWars.Utilities
             Console.Write(" ");
             Console.SetCursorPosition(Console.CursorLeft - 2, Console.CursorTop - 3);
             if (typeJoueur != TypeJoueur.Adversaire)
-                DrawJoueur(typeJoueur, positionJoueur.Joueur.PersonnageJoueur.TypePersonnage);
+                DrawJoueur(typeJoueur, positionJoueur.Joueur.Personnage.TypePersonnage);
             else
                 DrawJoueur(typeJoueur, TypePersonnage.NonLanceurDeSort);
 
@@ -213,7 +213,7 @@ namespace JeuStarWars.Utilities
             Console.Write(" ");
             Console.SetCursorPosition(Console.CursorLeft - 2, Console.CursorTop + 3);
             if (typeJoueur != TypeJoueur.Adversaire)
-                DrawJoueur(typeJoueur, positionJoueur.Joueur.PersonnageJoueur.TypePersonnage);
+                DrawJoueur(typeJoueur, positionJoueur.Joueur.Personnage.TypePersonnage);
             else
                 DrawJoueur(typeJoueur, TypePersonnage.NonLanceurDeSort);
         }
@@ -223,7 +223,7 @@ namespace JeuStarWars.Utilities
             Console.Write(" ");
             Console.SetCursorPosition(Console.CursorLeft - 2 - 5, Console.CursorTop);
             if (typeJoueur != TypeJoueur.Adversaire)
-                DrawJoueur(typeJoueur, positionJoueur.Joueur.PersonnageJoueur.TypePersonnage);
+                DrawJoueur(typeJoueur, positionJoueur.Joueur.Personnage.TypePersonnage);
             else
                 DrawJoueur(typeJoueur, TypePersonnage.NonLanceurDeSort);
         }
@@ -233,7 +233,7 @@ namespace JeuStarWars.Utilities
             Console.Write(" ");
             Console.SetCursorPosition(Console.CursorLeft - 2 + 5, Console.CursorTop);
             if (typeJoueur != TypeJoueur.Adversaire)
-                DrawJoueur(typeJoueur, positionJoueur.Joueur.PersonnageJoueur.TypePersonnage);
+                DrawJoueur(typeJoueur, positionJoueur.Joueur.Personnage.TypePersonnage);
             else
                 DrawJoueur(typeJoueur, TypePersonnage.NonLanceurDeSort);
 
@@ -247,8 +247,8 @@ namespace JeuStarWars.Utilities
 
         public static void Attaquer(Position currentJourPosition, Position adversairAattaquerPos, bool isDead = true)
         {
-            ConsoleColor colorJoueur = currentJourPosition.Joueur.TypeJoueur == TypeJoueur.Adversaire ? ConsoleColor.Red : (currentJourPosition.Joueur.PersonnageJoueur.TypePersonnage == TypePersonnage.LanceurDeSort ? ConsoleColor.DarkYellow : ConsoleColor.Blue);
-            ConsoleColor colorAdversaire = adversairAattaquerPos.Joueur.TypeJoueur == TypeJoueur.Adversaire ? ConsoleColor.Red : (adversairAattaquerPos.Joueur.PersonnageJoueur.TypePersonnage == TypePersonnage.LanceurDeSort ? ConsoleColor.DarkYellow : ConsoleColor.Blue);
+            ConsoleColor colorJoueur = currentJourPosition.Joueur.TypeJoueur == TypeJoueur.Adversaire ? ConsoleColor.Red : (currentJourPosition.Joueur.Personnage.TypePersonnage == TypePersonnage.LanceurDeSort ? ConsoleColor.DarkYellow : ConsoleColor.Blue);
+            ConsoleColor colorAdversaire = adversairAattaquerPos.Joueur.TypeJoueur == TypeJoueur.Adversaire ? ConsoleColor.Red : (adversairAattaquerPos.Joueur.Personnage.TypePersonnage == TypePersonnage.LanceurDeSort ? ConsoleColor.DarkYellow : ConsoleColor.Blue);
             for (int i = 0; i < 5; i++)
             {
                 Console.SetCursorPosition(currentJourPosition.LeftCursorPosition, currentJourPosition.TopCursorPosition);
@@ -357,7 +357,7 @@ namespace JeuStarWars.Utilities
                     SetJoueurInCaseByPosition(specialHeroChar, adversairAattaquerPos.LeftCursorPosition + 1, adversairAattaquerPos.TopCursorPosition, ConsoleColor.Red, 100);
 
                 }
-                if (adversairAattaquerPos.Joueur.PersonnageJoueur.TypePersonnage == TypePersonnage.LanceurDeSort)
+                if (adversairAattaquerPos.Joueur.Personnage.TypePersonnage == TypePersonnage.LanceurDeSort)
                     SetJoueurInCaseByPosition(specialHeroChar, adversairAattaquerPos.LeftCursorPosition + 1, adversairAattaquerPos.TopCursorPosition, ConsoleColor.DarkYellow, 100);
                 else
                     SetJoueurInCaseByPosition(specialHeroChar, adversairAattaquerPos.LeftCursorPosition + 1, adversairAattaquerPos.TopCursorPosition, ConsoleColor.Blue, 100);

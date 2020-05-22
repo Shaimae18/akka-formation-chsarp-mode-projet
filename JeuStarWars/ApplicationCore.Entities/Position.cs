@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Entities
 {
-    public class Position
+    public class Position : BaseEntity
     {
         
         public int? X { get; set; }
