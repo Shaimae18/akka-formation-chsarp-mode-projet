@@ -14,7 +14,7 @@ namespace ApplicationCore.services
         }
 
         
-
+        
        
         public bool CheckMoveValidity(TypeDeplacement typeDeplacement, Position currentPos, Grille grille)
         {

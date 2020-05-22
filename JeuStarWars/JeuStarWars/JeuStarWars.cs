@@ -237,7 +237,7 @@ namespace JeuStarWars
             var personnage = new PersonnageJoueur(listePersonnage.ElementAt(i));
             currentJoueur = new Joueur
             {
-                PersonnageJoueur = personnage,
+                Personnage = personnage,
                 PointsMagie = personnage.PointsMagie,
                 PointsExperiences = 0,
                 PointsVie = personnage.PointsVie,
@@ -393,7 +393,7 @@ namespace JeuStarWars
         {
             tour = new Tour();
             _nbrTour++;
-            tour.numeroDuTour = _nbrTour;
+            tour.NumeroDuTour = _nbrTour;
             tour.ActionTour = mode;
             partie.ListTours.Add(tour);
         }

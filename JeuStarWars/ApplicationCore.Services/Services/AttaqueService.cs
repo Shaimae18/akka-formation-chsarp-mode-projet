@@ -72,7 +72,7 @@ namespace ApplicationCore.services
 
             if (joueurAttaquant.TypeJoueur == TypeJoueur.Joueur)
             {
-                if (joueurAttaque.PersonnageJoueur.TypePersonnage == TypePersonnage.NonLanceurDeSort)
+                if (joueurAttaque.Personnage.TypePersonnage == TypePersonnage.NonLanceurDeSort)
                     joueurAttaquant.PointsExperiences += 1;
                 else
                     joueurAttaquant.PointsExperiences = joueurAttaquant.PointsExperiences + 10;
