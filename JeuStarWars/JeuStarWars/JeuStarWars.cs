@@ -8,12 +8,18 @@ using Microsoft.Extensions.DependencyInjection;
 using ApplicationCore.services;
 using TypePersonnage = Entities.TypePersonnage;
 using System.Linq;
+using Infrastructure;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using System.IO;
 
 namespace JeuStarWars
 {
     class JeuStarWars
     {
-        public static ServiceProvider serviceProvider;
+        public static IServiceCollection serviceCollection;
+        public static IServiceProvider serviceProvider;
+        public static IConfigurationRoot configuration;
         public static int nombreEnnemie = 10;
         public static Joueur currentJoueur;
         public static Partie partie;
@@ -30,32 +36,43 @@ namespace JeuStarWars
         private static bool _isMonTour;
         private static bool _isGameOver;
         private static bool _isPartieGagner;
-        private static int _nbrTour=0;
+        private static int _nbrTour = 0;
 
         static void Main(string[] args)
         {
-            ConfigureDependencies();
+
+            serviceCollection = new ServiceCollection();
+            ConfigureServices();
+            ConfigureConnexionString();
             ConsolePrametrage();
             WelcomeScreen();
             Console.WriteLine();
 
         }
-
-        private static void ConsolePrametrage()
+        private static void ConfigureConnexionString()
+        {
+            serviceCollection.AddDbContext<DataContext>(options => options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+         }
+    private static void ConsolePrametrage()
         {
             Console.OutputEncoding = System.Text.Encoding.Unicode;
             Console.ForegroundColor = ConsoleColor.Green;
           
         }
 
-        private static void ConfigureDependencies()
+        private static void ConfigureServices()
         {
-            serviceProvider = new ServiceCollection()
-           .AddScoped<IPersonnageService, PersonnageJoueurService>()
+            serviceCollection.AddScoped<IPersonnageService, PersonnageJoueurService>()
            .AddScoped<IDeplacementService, DeplacementService>()
            .AddScoped<IAttaqueService, AttaqueService>()
-           .AddScoped<IGrilleService, GrilleService>()
-           .BuildServiceProvider();
+           .AddScoped<IGrilleService, GrilleService>();
+           
+            configuration = new ConfigurationBuilder()
+           .SetBasePath(Directory.GetParent(AppContext.BaseDirectory).FullName)
+           .AddJsonFile("appsettings.json", false)
+           .Build();
+            serviceProvider = serviceCollection.BuildServiceProvider();
+
         }
 
 
