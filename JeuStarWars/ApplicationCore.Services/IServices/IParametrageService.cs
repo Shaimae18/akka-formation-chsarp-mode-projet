@@ -1,13 +1,13 @@
-﻿using ApplicationCore.Repository;
-using Entities;
+﻿using Entities;
 
 using System;
 using System.Collections.Generic;
 using System.Text;
+using ApplicationCore.Repository;
 
 namespace ApplicationCore.services
 {
-    public interface IPNJService : IRepository<PNJ>
+   public interface IParametrageService : IRepository<Parametrage>
     {
     }
 }

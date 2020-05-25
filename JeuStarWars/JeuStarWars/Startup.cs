@@ -1,6 +1,6 @@
 ﻿using ApplicationCore.services;
 using Entities;
-using Infrastructure;
+
 using JeuStarWars.Utilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -20,7 +20,7 @@ namespace JeuStarWars
         public IConfiguration Configuration { get; }
         private readonly IDeplacementService _deplacementService;
         private readonly IGrilleService _grilleService;
-        private readonly IPersonnageService _personnageService;
+        private readonly IPersonnageJoueurService _personnageService;
         private readonly IAttaqueService _attaqueService;
 
    
@@ -39,20 +39,16 @@ namespace JeuStarWars
         private  bool _isPartieGagner;
         private  int _nbrTour = 0;
 
-        public Startup(IConfiguration configuration,IDeplacementService DeplacementService, IGrilleService GrilleService,IPersonnageService PersonnageService, IAttaqueService AttaqueService)
+        public Startup(IConfiguration configuration,IDeplacementService DeplacementService, IGrilleService GrilleService, IPersonnageJoueurService PersonnageJoueurService, IAttaqueService AttaqueService)
         {
             Configuration = configuration;
             _deplacementService = DeplacementService;
             _grilleService = GrilleService;
-            _personnageService = PersonnageService;
+            _personnageService = PersonnageJoueurService;
             _attaqueService = AttaqueService;
            
         }
-        public void ConfigureServices(IServiceCollection services)
-        {
-          
-
-        }
+       
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
@@ -66,6 +62,7 @@ namespace JeuStarWars
 
         private void StartNewGame()
         {
+            _personnageService.Insert(new PersonnageJoueur(pseudo: "Adv1", cote: Cote.Obscur, typePersonnage: TypePersonnage.NonLanceurDeSort));
             ConsolePrametrage();
             WelcomeScreen();
             Console.WriteLine();

@@ -1,5 +1,5 @@
-﻿using ApplicationCore.services;
-using Infrastructure;
+﻿using ApplicationCore.Repository;
+using ApplicationCore.services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -31,7 +31,7 @@ namespace JeuStarWars
              })
                 .ConfigureServices((hostContext, services) =>
                 {
-                    services.AddScoped<IPersonnageService, PersonnageJoueurService>()
+                    services.AddScoped<IPersonnageJoueurService, PersonnageJoueurService>()
                     .AddScoped<IDeplacementService, DeplacementService>()
                     .AddScoped<IAttaqueService, AttaqueService>()
                     .AddScoped<IGrilleService, GrilleService>();

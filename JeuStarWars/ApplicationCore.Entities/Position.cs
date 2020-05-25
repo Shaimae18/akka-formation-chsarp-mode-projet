@@ -13,7 +13,10 @@ namespace Entities
         public int TopCursorPosition { get; set; }
         public Joueur Joueur { get; set; }
 
-       
+        public Position()
+        {
+
+        }
         public Position(int? x, int? y, Joueur joueur=null)
         {
             this.X = x;

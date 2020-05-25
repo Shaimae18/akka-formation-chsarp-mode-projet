@@ -6,6 +6,10 @@ namespace Entities
 {
     public class PNJ:Personnage
     {
+        public PNJ()
+        {
+
+        }
         public PNJ(string pseudo, Cote cote = Cote.Obscur, int? pointsVie = 150,TypePersonnage typePersonnage = TypePersonnage.NonLanceurDeSort)
         {
           

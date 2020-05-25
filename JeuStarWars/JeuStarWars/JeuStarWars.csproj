@@ -28,7 +28,6 @@
   <ItemGroup>
     <ProjectReference Include="..\ApplicationCore.Entities\ApplicationCore.Entities.csproj" />
     <ProjectReference Include="..\ApplicationCore.Services\ApplicationCore.services.csproj" />
-    <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>
