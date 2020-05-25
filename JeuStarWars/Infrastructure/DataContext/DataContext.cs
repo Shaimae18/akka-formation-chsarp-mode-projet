@@ -22,7 +22,7 @@ namespace Infrastructure
         public DbSet<Parametrage> Parametrages { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("server = PROBOOK - PC\\SQLEXPRESS02; database = StarWars; trusted_connection = true;");
+            optionsBuilder.UseSqlServer(@"server=PROBOOK-PC\SQLEXPRESS02;database=StarWars;trusted_connection=true;");
         }
 
     }
