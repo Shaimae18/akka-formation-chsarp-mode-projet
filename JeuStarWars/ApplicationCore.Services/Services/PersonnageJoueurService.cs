@@ -1,23 +1,29 @@
 ﻿
 
+
+using ApplicationCore.Repository;
+using ApplicationCore.services;
 using Entities;
 using System;
 using System.Collections.Generic;
 using System.Text;
 namespace ApplicationCore.services
 {
-    public class PersonnageJoueurService : IPersonnageService
+    public class PersonnageJoueurService : Repository<PersonnageJoueur, DataContext>,IPersonnageJoueurService
     {
-        public PersonnageJoueurService() : base() { }
 
-        public IEnumerable<PersonnageJoueur> GetAllPersonnages()
+
+        
+        public PersonnageJoueurService(DataContext context) : base(context) 
         {
-            throw new NotImplementedException();
+           
         }
+       
 
         public IEnumerable<PersonnageJoueur> GetPersonnagesByCote(Cote cote)
         {
             #region A revoir (recuperer la du repository)
+
             PersonnageJoueur[] list;
             if (cote == Cote.Lumineux)
             {

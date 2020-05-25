@@ -6,10 +6,9 @@ using System.Text;
 
 namespace ApplicationCore.services
 {
-    public interface IPersonnageService:IRepository<Personnage>
+   public interface IPersonnageJoueurService : IRepository<PersonnageJoueur>
     {
-    
-      
+        IEnumerable<PersonnageJoueur> GetPersonnagesByCote(Cote cote);
 
     }
 }

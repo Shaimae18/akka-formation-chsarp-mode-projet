@@ -11,6 +11,7 @@ namespace Entities
         public DateTime DateDernierSauvgarde { get; set; }
         public List<Joueur> ListJoueurs { get; set; }
        public List<Tour> ListTours { get; set; }
+
         public Partie() 
         {
             DateCreation = DateTime.Today;

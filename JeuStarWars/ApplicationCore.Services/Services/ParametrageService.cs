@@ -6,8 +6,8 @@ using ApplicationCore.Repository;
 
 namespace ApplicationCore.services
 {
-    public class PNJService : Repository<PNJ, DataContext>, IPNJService
+    public class ParametrageService : Repository<Parametrage, DataContext>, IParametrageService
     {
-        public PNJService(DataContext context) : base(context) { }
+        public ParametrageService(DataContext context) : base(context) { }
     }
 }
