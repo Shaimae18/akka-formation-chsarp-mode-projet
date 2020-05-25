@@ -9,6 +9,7 @@ using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -17,20 +18,25 @@ namespace JeuStarWars
 {
     public class Startup: BackgroundService
     {
+
+        #region Services
         public IConfiguration Configuration { get; }
         private readonly IDeplacementService _deplacementService;
         private readonly IGrilleService _grilleService;
         private readonly IPersonnageJoueurService _personnageService;
         private readonly IAttaqueService _attaqueService;
+        private readonly IParametrageService _parametrageService;
 
-   
+        #endregion
+
         public  Joueur currentJoueur;
         public  Partie partie;
         public  Tour tour;
         public  Grille grille;
 
+        private List<Parametrage> _lstParametrages;
         private IEnumerable<Position> _listPosition;
-        public  int nombreEnnemie = 10;
+        private  int nombreEnnemie = 10;
         private  dynamic _headerCursorPosition;
         private  dynamic _barreEtatCrsorPosition;
         private  dynamic _barreTourPosition;
@@ -39,16 +45,25 @@ namespace JeuStarWars
         private  bool _isPartieGagner;
         private  int _nbrTour = 0;
 
-        public Startup(IConfiguration configuration,IDeplacementService DeplacementService, IGrilleService GrilleService, IPersonnageJoueurService PersonnageJoueurService, IAttaqueService AttaqueService)
+        public Startup
+            (
+            IConfiguration configuration,
+            IDeplacementService DeplacementService,
+            IGrilleService GrilleService,
+            IPersonnageJoueurService PersonnageJoueurService,
+            IAttaqueService AttaqueService,
+            IParametrageService ParametrageService
+            )
         {
             Configuration = configuration;
             _deplacementService = DeplacementService;
             _grilleService = GrilleService;
             _personnageService = PersonnageJoueurService;
             _attaqueService = AttaqueService;
-           
+            _parametrageService = ParametrageService;
+
+
         }
-       
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
@@ -56,13 +71,13 @@ namespace JeuStarWars
             {
 
                 StartNewGame();
-                await Task.Delay(1000, stoppingToken);
+                await Task.Delay(100, stoppingToken);
             }
         }
 
         private void StartNewGame()
         {
-            _personnageService.Insert(new PersonnageJoueur(pseudo: "Adv1", cote: Cote.Obscur, typePersonnage: TypePersonnage.NonLanceurDeSort));
+            _lstParametrages = new List<Parametrage>();
             ConsolePrametrage();
             WelcomeScreen();
             Console.WriteLine();
@@ -105,7 +120,6 @@ namespace JeuStarWars
                 "    Choisissez une option parmi les options suivantes:",
                 "<<<<    N: Pour commencer une nouvelle partie    >>>>" ,
                 "<<<<   C: Pour reperendre une partie sauvgarder  >>>>",
-                "                      Prochainement                  ",
                 "<<<<               Q: Pour quitter               >>>>"
             };
             ConsoleWriter.SetFrame(listContent, 70, 50);
@@ -123,7 +137,7 @@ namespace JeuStarWars
                     break;
                 case "c":
                 case "C":
-
+                    ChargePartie();
                     break;
                 case "q":
                 case "Q":
@@ -135,16 +149,36 @@ namespace JeuStarWars
 
             }
         }
-        private   void NouvellePartie()
+        private void NouvellePartie()
         {
-            partie = new Partie();
-
-
+            
             Console.SetCursorPosition(_headerCursorPosition.posLeft, _headerCursorPosition.posTop);
             ReintialiseCursorPos();
             Prologue();
             ReintialiseCursorPos();
             ChoisirPersonnage();
+            SauvegarderParametrage();
+            InitializeGrille();
+          
+        }
+        private void ChargePartie()
+        {
+            Console.SetCursorPosition(_headerCursorPosition.posLeft, _headerCursorPosition.posTop);
+            ReintialiseCursorPos();
+            
+            GetParametrageInitial();
+
+        }
+
+        private void SauvegarderParametrage()
+        {
+            _lstParametrages.ForEach(parametre => _parametrageService.Insert(parametre));
+        }
+
+        private void InitializeGrille()
+        {
+            partie = new Partie();
+
             ReintialiseCursorPos();
             SetInstruction();
             _barreEtatCrsorPosition = new { posLeft = Console.CursorLeft, posTop = Console.CursorTop };
@@ -157,6 +191,24 @@ namespace JeuStarWars
             _barreTourPosition = new { posLeft = Console.CursorLeft, posTop = Console.CursorTop };
             RunTour();
         }
+
+      
+
+        private void GetParametrageInitial()
+        {
+            _lstParametrages = _parametrageService.FindAll().ToList();
+            if(_lstParametrages.Count>0)
+            {
+              var param =   _lstParametrages.FirstOrDefault(p => p.NomParametre.Equals("PersonnageChoisie"));
+                if(param != null)
+                    InitializeJoueur(_personnageService.FindById(int.Parse(param.Valeur)));
+                else
+                    ChoisirPersonnage();
+                InitializeGrille();
+            }
+
+        }
+
         private   void Prologue()
         {
 
@@ -214,7 +266,7 @@ namespace JeuStarWars
                     return GetCote();
             }
         }
-        private   void ChoisirPersonnage()
+        private  void ChoisirPersonnage()
         {
             ConsoleWriter.SetEmptyLine(4);
             List<string> listContent = new List<string>()
@@ -242,8 +294,14 @@ namespace JeuStarWars
             i = GetPersonnageChoisi();
             ReintialiseCursorPos();
 
-
             var personnage = new PersonnageJoueur(listePersonnage.ElementAt(i));
+            _lstParametrages.Add(new Parametrage("PersonnageChoisie", personnage.Id.ToString()));
+            InitializeJoueur(personnage);
+
+
+        }
+       public void InitializeJoueur(PersonnageJoueur personnage)
+        {
             currentJoueur = new Joueur
             {
                 Personnage = personnage,

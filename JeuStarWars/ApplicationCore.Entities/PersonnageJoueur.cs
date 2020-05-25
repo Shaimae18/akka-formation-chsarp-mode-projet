@@ -25,6 +25,7 @@ namespace Entities
 
         public PersonnageJoueur(PersonnageJoueur personnage)
         {
+            this.Id = personnage.Id;
             this.Pseudo = personnage.Pseudo;
             this.Cote = personnage.Cote;
             this.PointsVie = personnage.PointsVie;

@@ -20,10 +20,7 @@ namespace ApplicationCore.Repository
         public DbSet<PersonnageJoueur> PersonnageJoueurs { get; set; }
         public DbSet<PNJ> PNJs { get; set; }
         public DbSet<Parametrage> Parametrages { get; set; }
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseSqlServer(@"server=PROBOOK-PC\SQLEXPRESS02;database=StarWars;trusted_connection=true;");
-        }
+        
 
     }
 
