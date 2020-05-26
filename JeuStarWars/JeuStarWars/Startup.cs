@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using MoreLinq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,10 +23,14 @@ namespace JeuStarWars
         #region Services
         public IConfiguration Configuration { get; }
         private readonly IDeplacementService _deplacementService;
-        private readonly IGrilleService _grilleService;
+        private readonly IPartieService _partieService;
         private readonly IPersonnageJoueurService _personnageService;
         private readonly IAttaqueService _attaqueService;
         private readonly IParametrageService _parametrageService;
+        private readonly IPositionService _positionService;
+        private readonly IJoueurService _joueurService;
+        private readonly IPNJService _pNJService;
+        private readonly ITourService _tourService;
 
         #endregion
 
@@ -36,33 +41,38 @@ namespace JeuStarWars
 
         private List<Parametrage> _lstParametrages;
         private IEnumerable<Position> _listPosition;
-        private  int nombreEnnemie = 10;
         private  dynamic _headerCursorPosition;
         private  dynamic _barreEtatCrsorPosition;
         private  dynamic _barreTourPosition;
         private  bool _isMonTour;
         private  bool _isGameOver;
         private  bool _isPartieGagner;
-        private  int _nbrTour = 0;
+        private int _nbr;
 
         public Startup
             (
             IConfiguration configuration,
             IDeplacementService DeplacementService,
-            IGrilleService GrilleService,
+            IPartieService PartieService,
             IPersonnageJoueurService PersonnageJoueurService,
             IAttaqueService AttaqueService,
-            IParametrageService ParametrageService
+            IParametrageService ParametrageService,
+            IPositionService PositionService,
+            IJoueurService JoueurService,
+            IPNJService   PNJService,
+            ITourService TourService
             )
         {
             Configuration = configuration;
             _deplacementService = DeplacementService;
-            _grilleService = GrilleService;
+            _partieService = PartieService;
             _personnageService = PersonnageJoueurService;
             _attaqueService = AttaqueService;
             _parametrageService = ParametrageService;
-
-
+            _positionService = PositionService;
+            _joueurService = JoueurService;
+            _pNJService = PNJService;
+            _tourService = TourService;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -77,6 +87,7 @@ namespace JeuStarWars
 
         private void StartNewGame()
         {
+         
             _lstParametrages = new List<Parametrage>();
             ConsolePrametrage();
             WelcomeScreen();
@@ -151,48 +162,89 @@ namespace JeuStarWars
         }
         private void NouvellePartie()
         {
-            
+            _isMonTour = true;
+            _isGameOver = false;
+            _isPartieGagner = false;
+            partie = new Partie();
+            ReinsialiserDonnee();
             Console.SetCursorPosition(_headerCursorPosition.posLeft, _headerCursorPosition.posTop);
             ReintialiseCursorPos();
             Prologue();
             ReintialiseCursorPos();
             ChoisirPersonnage();
             SauvegarderParametrage();
+            GetInitialPosition();
+            var lst = _listPosition.ToList();
+            lst.Add(new Position(2, 9, currentJoueur));
+            _listPosition = lst;
             InitializeGrille();
           
         }
         private void ChargePartie()
         {
-            Console.SetCursorPosition(_headerCursorPosition.posLeft, _headerCursorPosition.posTop);
-            ReintialiseCursorPos();
+            partie = _partieService.FindAll().FirstOrDefault();
+            if(partie != null)
+            {
+                _isMonTour = partie.DernierTour.isMonTour;
+                _isGameOver = false;
+                _isPartieGagner = false;
+                tour = partie.DernierTour;
+                _nbr = tour.NumeroDuTour;
+                Console.SetCursorPosition(_headerCursorPosition.posLeft, _headerCursorPosition.posTop);
+                ReintialiseCursorPos();
+                //GetParametrageInitial();
+                GetPosition();
+                currentJoueur = _listPosition.FirstOrDefault(j => j.Joueur.TypeJoueur == TypeJoueur.Joueur)?.Joueur;
+               InitializeGrille();
+            }
             
-            GetParametrageInitial();
-
+            // GetLastSauvegard();
         }
 
-        private void SauvegarderParametrage()
+        private void ReinsialiserDonnee()
         {
-            _lstParametrages.ForEach(parametre => _parametrageService.Insert(parametre));
+            _parametrageService.DeleteAll();
+            _positionService.DeleteAll();
+            _partieService.DeleteAll();
+            _tourService.DeleteAll();
+            _joueurService.DeleteAll();
         }
+        private void GetInitialPosition()
+        {
+
+          _listPosition =   _positionService.GetInitialPosition(_pNJService.FindAll().ToList());
+        }
+
+       
+        private void GetLastSauvegard()
+        {
+           
+        }
+
+       
 
         private void InitializeGrille()
         {
-            partie = new Partie();
-
+           
+            
             ReintialiseCursorPos();
             SetInstruction();
             _barreEtatCrsorPosition = new { posLeft = Console.CursorLeft, posTop = Console.CursorTop };
             SetJoueurInfo(currentJoueur);
-            _isMonTour = true;
-            _isGameOver = false;
-            _isPartieGagner = false;
-            _listPosition = _grilleService.GetInitialPositionInGrille(currentJoueur, nombreEnnemie);
             grille = ConsoleWriter.SetGrille(18, 10, _listPosition);
             _barreTourPosition = new { posLeft = Console.CursorLeft, posTop = Console.CursorTop };
+            if(tour != null )
+                SetTourInfo();
+            Console.Write("Cliquez sur entrée pour commencer: ");
+            Console.ReadLine();
             RunTour();
         }
 
-      
+        private void GetPosition()
+        {
+            _listPosition = _positionService.FindAll();
+       
+        }
 
         private void GetParametrageInitial()
         {
@@ -204,7 +256,7 @@ namespace JeuStarWars
                     InitializeJoueur(_personnageService.FindById(int.Parse(param.Valeur)));
                 else
                     ChoisirPersonnage();
-                InitializeGrille();
+              
             }
 
         }
@@ -356,11 +408,12 @@ namespace JeuStarWars
 
         private   void RunTour()
         {
-            while (_isMonTour && !_isGameOver && !_isPartieGagner)
+            var currentPositionJoueur = _listPosition.Where(p => p.Joueur.TypeJoueur == TypeJoueur.Joueur).FirstOrDefault();
+            while ( !_isGameOver && !_isPartieGagner)
             {
 
                 bool isMoved = true;
-                var currentPositionJoueur = _listPosition.Where(p => p.Joueur.TypeJoueur == TypeJoueur.Joueur).FirstOrDefault();
+                
 
                 Joueur joueurMort = RunAttack(currentPositionJoueur);
 
@@ -395,16 +448,13 @@ namespace JeuStarWars
                         break;
                     case ConsoleKey.DownArrow:
                         if (currentPositionJoueur != null && CanMove(TypeDeplacement.Down, currentPositionJoueur))
-
                             ConsoleWriter.Down(currentPositionJoueur);
                         else
                             isMoved = false;
                         break;
-
                     default:
                         isMoved = false;
                         break;
-
                 }
                 if (isMoved)
                 {
@@ -417,11 +467,9 @@ namespace JeuStarWars
                     TourAdversaire(currentPositionJoueur);
                     Thread.Sleep(1000);
                 }
-
-
-
-
+                SauvegardeAutomatique(partie);
             }
+           
             if (_isGameOver)
             {
                 var text = new WenceyWang.FIGlet.AsciiArt("Game Over");
@@ -453,16 +501,20 @@ namespace JeuStarWars
                 }
                 Console.ReadLine();
             }
-
+            else
+                TourAdversaire(currentPositionJoueur);
         }
+
+       
 
         private   void InitializerNouveauTour(ActionTour mode)
         {
             tour = new Tour();
-            _nbrTour++;
-            tour.NumeroDuTour = _nbrTour;
+            _nbr++;
+            tour.NumeroDuTour= _nbr;
             tour.ActionTour = mode;
-            partie.ListTours.Add(tour);
+            tour.isMonTour = _isMonTour;
+            partie.DernierTour = tour;
         }
 
         private   bool CanMove(TypeDeplacement typeDeplacement, Position currentPositionJoueur)
@@ -585,5 +637,34 @@ namespace JeuStarWars
             };
             ConsoleWriter.SetFrame(listContent, 90, 30, ConsoleColor.Green);
         }
+
+        #region Sauvgard
+        private void SauvegarderParametrage()
+        {
+            _lstParametrages.ForEach(parametre => _parametrageService.Insert(parametre));
+        }
+        private void SauvegardeAutomatique(Partie partieEnCours)
+        {
+            ConsoleWriter.SetConsoleCursorPosition(_barreTourPosition.posLeft, _barreTourPosition.posTop+3);
+            ConsoleWriter.ClearCurrentConsoleLine();
+            Console.WriteLine("Sauvegarde automatique en cours ...");
+            partie.DernierTour.ListPositionEnCours = null;
+            if(partieEnCours.Id == 0)
+            {
+                partieEnCours.DateCreation = DateTime.Now;
+                partieEnCours.DateDernierSauvgarde = DateTime.Now;
+                partieEnCours.Id = _partieService.Insert(partieEnCours);
+            }
+            else
+            {
+                partieEnCours.DateDernierSauvgarde = DateTime.Now;
+               _partieService.Update(partieEnCours);
+            }
+             partieEnCours.DernierTour.ListPositionEnCours = _listPosition.ToList();
+            _partieService.Update(partieEnCours);
+            ConsoleWriter.SetConsoleCursorPosition(_barreTourPosition.posLeft, _barreTourPosition.posTop + 3);
+            ConsoleWriter.ClearCurrentConsoleLine();
+        }
+        #endregion
     }
 }

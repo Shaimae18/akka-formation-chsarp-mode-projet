@@ -10,6 +10,9 @@ namespace ApplicationCore.services
         public GrilleService() : base() { }
         public IEnumerable<Position> GetInitialPositionInGrille(Joueur currentJoueur, int nombreEnnemie)
         {
+
+
+
             return new List<Position>()
             {
                 new Position(2,9,currentJoueur),

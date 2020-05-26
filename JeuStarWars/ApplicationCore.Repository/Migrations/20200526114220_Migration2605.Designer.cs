@@ -4,14 +4,16 @@ using ApplicationCore.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ApplicationCore.Repository.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20200526114220_Migration2605")]
+    partial class Migration2605
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -35,6 +37,9 @@ namespace ApplicationCore.Repository.Migrations
                     b.Property<bool?>("OnAttack")
                         .HasColumnType("bit");
 
+                    b.Property<int?>("PartieId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("PersonnageId")
                         .HasColumnType("int");
 
@@ -54,6 +59,8 @@ namespace ApplicationCore.Repository.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("PartieId");
 
                     b.HasIndex("PersonnageId");
 
@@ -91,12 +98,7 @@ namespace ApplicationCore.Repository.Migrations
                     b.Property<DateTime>("DateDernierSauvgarde")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("DernierTourId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("DernierTourId");
 
                     b.ToTable("Parties");
                 });
@@ -150,9 +152,6 @@ namespace ApplicationCore.Repository.Migrations
                     b.Property<int>("TopCursorPosition")
                         .HasColumnType("int");
 
-                    b.Property<int?>("TourId")
-                        .HasColumnType("int");
-
                     b.Property<int?>("X")
                         .HasColumnType("int");
 
@@ -162,8 +161,6 @@ namespace ApplicationCore.Repository.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("JoueurId");
-
-                    b.HasIndex("TourId");
 
                     b.ToTable("Positions");
                 });
@@ -187,8 +184,8 @@ namespace ApplicationCore.Repository.Migrations
                     b.Property<int>("NumeroDuTour")
                         .HasColumnType("int");
 
-                    b.Property<bool>("isMonTour")
-                        .HasColumnType("bit");
+                    b.Property<int?>("PartieId")
+                        .HasColumnType("int");
 
                     b.Property<string>("message")
                         .HasColumnType("nvarchar(max)");
@@ -198,6 +195,8 @@ namespace ApplicationCore.Repository.Migrations
                     b.HasIndex("JoueurEnAttaqueId");
 
                     b.HasIndex("JoueurEndefenseId");
+
+                    b.HasIndex("PartieId");
 
                     b.ToTable("Tours");
                 });
@@ -227,16 +226,13 @@ namespace ApplicationCore.Repository.Migrations
 
             modelBuilder.Entity("Entities.Joueur", b =>
                 {
+                    b.HasOne("Entities.Partie", null)
+                        .WithMany("ListJoueurs")
+                        .HasForeignKey("PartieId");
+
                     b.HasOne("Entities.Personnage", "Personnage")
                         .WithMany()
                         .HasForeignKey("PersonnageId");
-                });
-
-            modelBuilder.Entity("Entities.Partie", b =>
-                {
-                    b.HasOne("Entities.Tour", "DernierTour")
-                        .WithMany()
-                        .HasForeignKey("DernierTourId");
                 });
 
             modelBuilder.Entity("Entities.Position", b =>
@@ -244,10 +240,6 @@ namespace ApplicationCore.Repository.Migrations
                     b.HasOne("Entities.Joueur", "Joueur")
                         .WithMany()
                         .HasForeignKey("JoueurId");
-
-                    b.HasOne("Entities.Tour", null)
-                        .WithMany("ListPositionEnCours")
-                        .HasForeignKey("TourId");
                 });
 
             modelBuilder.Entity("Entities.Tour", b =>
@@ -259,6 +251,10 @@ namespace ApplicationCore.Repository.Migrations
                     b.HasOne("Entities.Joueur", "JoueurEndefense")
                         .WithMany()
                         .HasForeignKey("JoueurEndefenseId");
+
+                    b.HasOne("Entities.Partie", null)
+                        .WithMany("ListTours")
+                        .HasForeignKey("PartieId");
                 });
 #pragma warning restore 612, 618
         }

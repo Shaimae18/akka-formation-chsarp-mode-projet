@@ -8,9 +8,10 @@ namespace ApplicationCore.Repository
     {
         IEnumerable<T> FindAll();
         T FindById(int id);
-        bool Insert(T entity);
+        int Insert(T entity);
         bool Update(T entity);
         bool Delete(T entity);
+        bool DeleteAll();
         bool Exists(int id);
     }
 }

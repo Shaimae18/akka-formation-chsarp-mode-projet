@@ -18,12 +18,18 @@ namespace ApplicationCore.services
             _dbSet = _context.Set<Parametrage>();
 
         }
-        public override bool Insert(Parametrage entity)
+        public override int Insert(Parametrage entity)
         {
             Parametrage parametrage = _context.Parametrages.Where(p => p.NomParametre == entity.NomParametre).FirstOrDefault();
             if (parametrage != null)
                 Delete(parametrage);
             return base.Insert(entity);
+        }
+
+        public void ReintialiserParametrage()
+        {
+           
+           
         }
     }
 }

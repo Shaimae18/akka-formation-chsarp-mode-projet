@@ -102,6 +102,7 @@ namespace JeuStarWars.Utilities
                         Console.Write(middelBorder);
                         pos.TopCursorPosition = Console.CursorTop;
                         pos.LeftCursorPosition = Console.CursorLeft;
+                        if(pos.Joueur.Etat == Etat.Vivant)
                         switch (pos.Joueur.TypeJoueur)
                         {
                             case TypeJoueur.Joueur:
@@ -114,6 +115,10 @@ namespace JeuStarWars.Utilities
                                 SetJoueurInCase(ennemiChar, ConsoleColor.Red);
                                 break;
                         }
+                        else
+                        SetJoueurInCase(adversaireMort, ConsoleColor.Red);
+                               
+                           
                         Console.ForegroundColor = ConsoleColor.Green;
                         Console.Write(middelBorder);
                     }
@@ -205,7 +210,7 @@ namespace JeuStarWars.Utilities
                 DrawJoueur(typeJoueur, positionJoueur.Joueur.Personnage.TypePersonnage);
             else
                 DrawJoueur(typeJoueur, TypePersonnage.NonLanceurDeSort);
-
+            positionJoueur.Y = positionJoueur.Y- 1;
         }
         public static void Down(Position positionJoueur, TypeJoueur typeJoueur = TypeJoueur.Joueur)
         {
@@ -216,6 +221,7 @@ namespace JeuStarWars.Utilities
                 DrawJoueur(typeJoueur, positionJoueur.Joueur.Personnage.TypePersonnage);
             else
                 DrawJoueur(typeJoueur, TypePersonnage.NonLanceurDeSort);
+            positionJoueur.Y = positionJoueur.Y + 1;
         }
         public static void Left(Position positionJoueur, TypeJoueur typeJoueur = TypeJoueur.Joueur)
         {
@@ -226,6 +232,7 @@ namespace JeuStarWars.Utilities
                 DrawJoueur(typeJoueur, positionJoueur.Joueur.Personnage.TypePersonnage);
             else
                 DrawJoueur(typeJoueur, TypePersonnage.NonLanceurDeSort);
+            positionJoueur.X = positionJoueur.X - 1;
         }
         public static void Right(Position positionJoueur, TypeJoueur typeJoueur = TypeJoueur.Joueur)
         {
@@ -236,7 +243,7 @@ namespace JeuStarWars.Utilities
                 DrawJoueur(typeJoueur, positionJoueur.Joueur.Personnage.TypePersonnage);
             else
                 DrawJoueur(typeJoueur, TypePersonnage.NonLanceurDeSort);
-
+            positionJoueur.X = positionJoueur.X + 1;
         }
 
 

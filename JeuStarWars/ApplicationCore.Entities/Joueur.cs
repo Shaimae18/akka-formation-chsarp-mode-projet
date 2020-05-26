@@ -5,12 +5,13 @@ using System.Text;
 namespace Entities
 {
 
-    public class Joueur :Personnage,IJoueur
+    public class Joueur : BaseEntity, IJoueur
     {
         public Personnage Personnage { get; set; }
         public int? PointsExperiences { get; set; }
         public Etat Etat { get; set; }
         public bool? OnAttack { get; set; }
+        public int? PointsVie { get; set; }
         public int? PointsMagie { get; set ; }
         public int? Portee { get ; set; }
         public int? Degat { get ; set; }

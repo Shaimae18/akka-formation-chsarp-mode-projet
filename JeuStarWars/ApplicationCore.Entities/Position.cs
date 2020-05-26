@@ -12,7 +12,6 @@ namespace Entities
         public int LeftCursorPosition { get; set; }
         public int TopCursorPosition { get; set; }
         public Joueur Joueur { get; set; }
-
         public Position()
         {
 

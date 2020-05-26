@@ -116,6 +116,7 @@ namespace ApplicationCore.services
             IEnumerable<Position> listPositionAdversaire = listPosition.Where(p => p.Joueur.TypeJoueur == TypeJoueur.Adversaire && p.Joueur.OnAttack != true && p.Joueur.Etat != Etat.Mort);
             listPositionAdversaire.ForEach(pos => 
             { 
+
                 dictPos = Deplacer(currentPositionJoueur, pos, listPosition, grille);
                 listDesDeplacementsPrevu.Add(dictPos);
             });
