@@ -18,20 +18,17 @@ namespace ApplicationCore.Repository
             this.RepositoryContext = repositoryContext;
             this.dbSet = repositoryContext.Set<T>();
         }
-        public virtual bool Insert(T entity)
+        public virtual int Insert(T entity)
         {
-            try
-            {
-                dbSet.Add(entity);
+                if (!Exists(entity.Id))
+                    dbSet.Add(entity);
+                else
+                    Update(entity);
                 this.RepositoryContext.SaveChanges();
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
+                return entity.Id;
+           
         }
-
+  
         public virtual bool Delete(T entity)
         {
             try
@@ -45,10 +42,24 @@ namespace ApplicationCore.Repository
                 return false;
             }
         }
+        public virtual bool DeleteAll()
+        {
+            try
+            {
+                dbSet.RemoveRange(dbSet);
+                RepositoryContext.SaveChanges();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
 
         public virtual IEnumerable<T> FindAll()
         {
-            return this.dbSet.AsNoTracking().ToList();
+            return this.dbSet.AsNoTracking()
+                .ToList();
 
         }
         public virtual T FindById(int Id)

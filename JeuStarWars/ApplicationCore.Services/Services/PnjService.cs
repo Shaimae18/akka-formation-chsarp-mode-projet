@@ -9,5 +9,6 @@ namespace ApplicationCore.services
     public class PNJService : Repository<PNJ, DataContext>, IPNJService
     {
         public PNJService(DataContext context) : base(context) { }
+       
     }
 }

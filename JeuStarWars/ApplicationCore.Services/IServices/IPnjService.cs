@@ -9,5 +9,6 @@ namespace ApplicationCore.services
 {
     public interface IPNJService : IRepository<PNJ>
     {
+      
     }
 }

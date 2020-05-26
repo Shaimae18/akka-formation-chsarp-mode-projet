@@ -9,5 +9,6 @@ namespace ApplicationCore.services
 {
     public interface IPositionService : IRepository<Position>
     {
+        IEnumerable<Position> GetInitialPosition(List<PNJ> enumerable);
     }
 }

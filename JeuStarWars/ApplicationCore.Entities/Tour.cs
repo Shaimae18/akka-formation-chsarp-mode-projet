@@ -10,7 +10,9 @@ namespace Entities
         public int NumeroDuTour { get; set; }
         public Joueur JoueurEnAttaque { get; set; }
         public Joueur JoueurEndefense { get; set; }
+        public List<Position> ListPositionEnCours { get; set; }
         public string message { get; set; }
+        public bool isMonTour { get; set; }
         public ActionTour ActionTour { get; set; }
         public override string ToString()
         {

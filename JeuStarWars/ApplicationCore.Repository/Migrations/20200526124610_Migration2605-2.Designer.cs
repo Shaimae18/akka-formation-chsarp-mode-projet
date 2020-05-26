@@ -4,14 +4,16 @@ using ApplicationCore.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ApplicationCore.Repository.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20200526124610_Migration2605-2")]
+    partial class Migration26052
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -186,9 +188,6 @@ namespace ApplicationCore.Repository.Migrations
 
                     b.Property<int>("NumeroDuTour")
                         .HasColumnType("int");
-
-                    b.Property<bool>("isMonTour")
-                        .HasColumnType("bit");
 
                     b.Property<string>("message")
                         .HasColumnType("nvarchar(max)");
