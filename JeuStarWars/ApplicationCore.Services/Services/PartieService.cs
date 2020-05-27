@@ -18,8 +18,10 @@ namespace ApplicationCore.services
         public override IEnumerable<Partie> FindAll()
         {
             return _context.Parties
-                .Include(t => t.DernierTour)
-                .ThenInclude(p => p.ListPositionEnCours);
+                .Include(p => p.ListTours)
+                .ThenInclude(t => t.ListPositionEnCours)
+                .ThenInclude(p => p.Joueur)
+                .ThenInclude(j => j.Personnage);
 
         }
     }

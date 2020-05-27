@@ -45,14 +45,18 @@ namespace ApplicationCore.services
         public IEnumerable<Position> GetInitialPosition(List<PNJ> Pnjs)
         {
 
-            _context.AddRange(_defaultListPos);
-            _context.SaveChanges();
+          
             for (int i = 0; i < _defaultListPos.Count; i++)
+            {
+                Insert(_defaultListPos[i]);
                 _defaultListPos[i].Joueur.Personnage = Pnjs[i];
+                Update(_defaultListPos[i]);
 
-            _context.UpdateRange(_defaultListPos);
-            _context.SaveChanges();
-            return FindAll();
+            }
+
+           // _context.UpdateRange(_defaultListPos);
+           //_context.SaveChanges();
+            return _defaultListPos;
         }
     }
 }

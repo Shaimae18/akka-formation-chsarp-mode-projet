@@ -20,10 +20,19 @@ namespace ApplicationCore.Repository
         }
         public virtual int Insert(T entity)
         {
-                if (!Exists(entity.Id))
-                    dbSet.Add(entity);
-                else
-                    Update(entity);
+          
+            if (!Exists(entity.Id))
+            {
+             //   RepositoryContext.Entry(entity).State = EntityState.Added;
+                dbSet.Add(entity);
+
+            }
+            else
+            {
+              //  RepositoryContext.Entry(entity).State = EntityState.Modified;
+                Update(entity);
+            }
+                   
                 this.RepositoryContext.SaveChanges();
                 return entity.Id;
            
